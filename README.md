@@ -9,3 +9,6 @@ A Java stream is stream of unary data. Meaning: You can put only one array or an
 ## Differencies to Java Streams:
 - No parallelization yet.
 - No collectors.
+
+# Usage
+Just take a look at the JUnit 5 tests.
