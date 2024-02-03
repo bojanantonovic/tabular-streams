@@ -17,7 +17,7 @@ class FloatUnaryTabularStreamTest {
 		assertEquals(sourceStream.numberOfLayers() + 1, mappedStream.numberOfLayers());
 		final var mappedTable = mappedStream.toArray(float[][]::new);
 		assertArrayEquals(new float[][] {{3}, {6}, {9}, {12}}, mappedTable);
-		final var mappedTable2 = mappedStream.toArraysColumStored(float[][]::new, float[]::new);
+		final var mappedTable2 = mappedStream.toArrayColumnStored();
 		assertArrayEquals(new float[] {3, 6, 9, 12}, mappedTable2[0]);
 		final var aggregationResult = mappedStream.aggregateRows(Float::max);
 		assertTrue(aggregationResult.isPresent());

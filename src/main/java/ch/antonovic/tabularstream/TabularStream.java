@@ -30,6 +30,8 @@ public abstract class TabularStream<R, I extends TabularStreamIterator<R>> {
 
 	public abstract TabularStream<R, I> filter(Predicate<R> predicate);
 
+	public abstract R[] toArrayColumnStored(IntFunction<R[]> tableGenerator, IntFunction<R> columnGenerator);
+
 	public long count() {
 		final var iterator = iterator();
 		var counter = 0L;
@@ -76,5 +78,11 @@ public abstract class TabularStream<R, I extends TabularStreamIterator<R>> {
 			}
 		}
 		return numberOfColumns;
+	}
+
+	protected static void checkRequiredArity(final TabularStream<?, ?> stream, final int requiredArity) {
+		if (stream.getNumberOfColumns() != requiredArity) {
+			throw new IllegalArgumentException("Wrong arity for this operation! Is " + stream.getNumberOfColumns() + ", required " + requiredArity);
+		}
 	}
 }

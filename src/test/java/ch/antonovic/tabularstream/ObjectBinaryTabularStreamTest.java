@@ -17,7 +17,7 @@ class ObjectBinaryTabularStreamTest {
 		assertEquals(sourceStream.numberOfLayers() + 1, mappedStream.numberOfLayers());
 		final var mappedTable = mappedStream.toArray(Integer[][]::new);
 		assertArrayEquals(new Integer[][] {{6}, {8}, {10}, {12}}, mappedTable);
-		final var mappedTable2 = mappedStream.toArraysColumStored(Integer[][]::new, Integer[]::new);
+		final var mappedTable2 = mappedStream.toArrayColumnStored(Integer[][]::new, Integer[]::new);
 		assertArrayEquals(new Integer[] {6, 8, 10, 12}, mappedTable2[0]);
 		final var aggregationResult = mappedStream.aggregateRows(Integer::max);
 		assertTrue(aggregationResult.isPresent());

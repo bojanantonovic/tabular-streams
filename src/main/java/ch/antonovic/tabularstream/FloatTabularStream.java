@@ -1,10 +1,12 @@
 package ch.antonovic.tabularstream;
 
 import ch.antonovic.tabularstream.function.FloatBinaryOperator;
+import ch.antonovic.tabularstream.function.FloatFunction;
 import ch.antonovic.tabularstream.function.FloatTernaryOperator;
 import ch.antonovic.tabularstream.function.FloatUnaryOperator;
 import ch.antonovic.tabularstream.internal.FloatTabularStreamAggregator;
 import ch.antonovic.tabularstream.internal.tabular.floattabular.stream.*;
+import ch.antonovic.tabularstream.internal.tabular.objecttabular.stream.ObjectTabularStreamWithFloatFunctionMapping;
 import ch.antonovic.tabularstream.iterator.FloatTabularStreamIterator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,6 +30,10 @@ public abstract class FloatTabularStream extends TabularStream<float[], FloatTab
 			case 2 -> new FloatBinaryTabularStreamWithColumns(columns[0], columns[1]);
 			default -> new FloatTabularStreamWithColumns(columns);
 		};
+	}
+
+	public static FloatTabularStream of(Optional<float[]> optional) {
+		return optional.map(FloatUnaryTabularStream::of).orElse(new FloatUnaryTabularStreamWithColumn(new float[0]));
 	}
 
 	public static FloatTabularStream generator(final int numberOfColumns, final Supplier<float[]> supplier) {
@@ -64,23 +70,24 @@ public abstract class FloatTabularStream extends TabularStream<float[], FloatTab
 		return new FloatTabularStreamWithFilter(this, predicate);
 	}
 
-	/*
-	public FloatTabularStream mapAllValuesUnary(final FloatUnaryOperator operator) {
-		return new FloatTabularStreamWithAllValuesUnaryMapping(this, operator);
-	}*/
-
 	public final FloatUnaryTabularStream mapUnary(final FloatUnaryOperator operator) {
-		if (getNumberOfColumns() != 1) {
-			throw new IllegalArgumentException("Wrong arity for this operation! Is " + getNumberOfColumns() + ", required 1");
-		}
+		checkRequiredArity(this, 1);
 		return new FloatTabularStreamWithUnaryMapping(this, operator);
 	}
 
+	// TODO
+	public final <T> ObjectTabularStream<T> mapToObject(final FloatFunction<T> operator, final Class<T> type) {
+		checkRequiredArity(this, 1);
+		return new ObjectTabularStreamWithFloatFunctionMapping<>(this, operator, type);
+	}
+
 	public final FloatUnaryTabularStream mapBinary(final FloatBinaryOperator operator) {
-		if (getNumberOfColumns() != 2) {
-			throw new IllegalArgumentException("Wrong arity for this operation! Is " + getNumberOfColumns() + ", required 2");
-		}
+		checkRequiredArity(this, 2);
 		return new FloatTabularStreamWithBinaryMapping(this, operator);
+	}
+
+	public FloatTabularStream mapAllValuesUnary(final FloatUnaryOperator operator) {
+		return new FloatTabularStreamWithAllValuesUnaryMapping(this, operator);
 	}
 
 	public Optional<float[]> aggregateRows(final FloatBinaryOperator... binaryOperators) {
@@ -91,7 +98,12 @@ public abstract class FloatTabularStream extends TabularStream<float[], FloatTab
 		return FloatTabularStreamAggregator.aggregateRowsWithSameOperator(this, binaryOperator);
 	}
 
-	public float[][] toArraysColumStored(final IntFunction<float[][]> tableGenerator, final IntFunction<float[]> columnGenerator) {
+	public float[][] toArrayColumnStored() {
+		return toArrayColumnStored(float[][]::new, float[]::new);
+	}
+
+	@Override
+	public float[][] toArrayColumnStored(final IntFunction<float[][]> tableGenerator, final IntFunction<float[]> columnGenerator) {
 		final var countedLength = count();
 		if (countedLength > Integer.MAX_VALUE) {
 			throw new IllegalArgumentException("Required array countedLength exceeds array limit in Java!");
@@ -112,4 +124,44 @@ public abstract class FloatTabularStream extends TabularStream<float[], FloatTab
 		iterator.reset();
 		return result;
 	}
+
+	public static float[] mapColumnsUnary(final float[] row, final FloatUnaryOperator operator) {
+		final float[] result = new float[row.length];
+		for (var i = 0; i < row.length; i++) {
+			result[i] = operator.applyAsFloat(row[i]);
+		}
+		return result;
+	}
+/*
+	public static Optional<float[]> squaredLengthsOfVectors(final FloatTabularStream stream) {
+		final FloatUnaryOperator sqrt = x -> (float) Math.sqrt(x);
+		final FloatUnaryOperator reciproke = x -> 1f / x;
+
+		final var floats = stream.mapAllValuesUnary(v -> v * v) //
+				.aggregateRowsWithSameOperator(Float::sum) //
+				.orElseThrow(IllegalStateException::new);
+		final var y2 = mapColumnsUnary(floats, sqrt);
+		final var y3 = mapColumnsUnary(y2, reciproke);
+
+		FloatTabularStream.of(floats).mapAllValuesUnary(sqrt).mapAllValuesUnary(reciproke).
+				.map(FloatTabularStream::of) //
+	}*/
+
+	//	public Optional<float[]> lengthsOfVectors(final FloatTabularStream stream) {
+	//		final FloatUnaryOperator sqrt = x -> (float) Math.sqrt(x);
+	//		final FloatUnaryOperator reciproke = x -> 1f / x;
+	///*
+	//		return squaredLengthsOfVectors(stream) //
+	//				.map(x->mapColumnsUnary(x,sqrt)) //
+	//				.map(x->mapColumnsUnary(x->reciproke))*/
+	//
+	//		final var squaredLengths = stream.mapAllValuesUnary(v -> v * v) //
+	//				.aggregateRowsWithSameOperator(Float::sum) //
+	//				.orElseThrow(IllegalStateException::new);
+	//		final var y2 = mapColumnsUnary(squaredLengths, sqrt);
+	//		final var y3 = mapColumnsUnary(y2, reciproke);
+	//
+	//		FloatTabularStream.of(squaredLengthd).mapAllValuesUnary(sqrt).mapAllValuesUnary(reciproke).
+	//				.map(FloatTabularStream::of) //
+	//	}
 }

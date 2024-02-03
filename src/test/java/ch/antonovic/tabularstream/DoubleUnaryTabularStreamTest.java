@@ -17,7 +17,7 @@ class DoubleUnaryTabularStreamTest {
 		assertEquals(sourceStream.numberOfLayers() + 1, mappedStream.numberOfLayers());
 		final var mappedTable = mappedStream.toArray(double[][]::new);
 		assertArrayEquals(new double[][] {{3}, {6}, {9}, {12}}, mappedTable);
-		final var mappedTable2 = mappedStream.toArraysColumStored(double[][]::new, double[]::new);
+		final var mappedTable2 = mappedStream.toArrayColumnStored();
 		assertArrayEquals(new double[] {3, 6, 9, 12}, mappedTable2[0]);
 		final var aggregationResult = mappedStream.aggregateRows(Double::max);
 		assertTrue(aggregationResult.isPresent());

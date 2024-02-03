@@ -68,16 +68,12 @@ public abstract class ObjectTabularStream<T> extends TabularStream<T[], ObjectTa
 	}
 
 	public final ObjectUnaryTabularStream<T> mapUnary(final UnaryOperator<T> operator) {
-		if (getNumberOfColumns() != 1) {
-			throw new IllegalArgumentException("Wrong arity for this operation! Is " + getNumberOfColumns() + ", required 1");
-		}
+		checkRequiredArity(this, 1);
 		return new ObjectTabularStreamWithUnaryMapping<>(this, operator);
 	}
 
 	public final ObjectUnaryTabularStream<T> mapBinary(final BinaryOperator<T> operator) {
-		if (getNumberOfColumns() != 2) {
-			throw new IllegalArgumentException("Wrong arity for this operation! Is " + getNumberOfColumns() + ", required 2");
-		}
+		checkRequiredArity(this, 2);
 		return new ObjectTabularStreamWithBinaryMapping<>(this, operator);
 	}
 
@@ -89,7 +85,8 @@ public abstract class ObjectTabularStream<T> extends TabularStream<T[], ObjectTa
 		return ObjectTabularStreamAggregator.aggregateRowsWithSameOperator(this, binaryOperator);
 	}
 
-	public T[][] toArraysColumStored(final IntFunction<T[][]> tableGenerator, final IntFunction<T[]> columnGenerator) {
+	@Override
+	public T[][] toArrayColumnStored(final IntFunction<T[][]> tableGenerator, final IntFunction<T[]> columnGenerator) {
 		final var countedLength = count();
 		if (countedLength > Integer.MAX_VALUE) {
 			throw new IllegalArgumentException("Required array countedLength exceeds array limit in Java!");

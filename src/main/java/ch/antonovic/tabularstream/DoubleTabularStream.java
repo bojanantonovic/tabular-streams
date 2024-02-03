@@ -62,16 +62,12 @@ public abstract class DoubleTabularStream extends TabularStream<double[], Double
 	}
 
 	public final DoubleUnaryTabularStream mapUnary(final DoubleUnaryOperator operator) {
-		if (getNumberOfColumns() != 1) {
-			throw new IllegalArgumentException("Wrong arity for this operation! Is " + getNumberOfColumns() + ", required 1");
-		}
+		checkRequiredArity(this, 1);
 		return new DoubleTabularStreamWithUnaryMapping(this, operator);
 	}
 
 	public final DoubleUnaryTabularStream mapBinary(final DoubleBinaryOperator operator) {
-		if (getNumberOfColumns() != 2) {
-			throw new IllegalArgumentException("Wrong arity for this operation! Is " + getNumberOfColumns() + ", required 2");
-		}
+		checkRequiredArity(this, 2);
 		return new DoubleTabularStreamWithBinaryMapping(this, operator);
 	}
 
@@ -83,7 +79,12 @@ public abstract class DoubleTabularStream extends TabularStream<double[], Double
 		return DoubleTabularStreamAggregator.aggregateRowsWithSameOperator(this, binaryOperator);
 	}
 
-	public double[][] toArraysColumStored(final IntFunction<double[][]> tableGenerator, final IntFunction<double[]> columnGenerator) {
+	public double[][] toArrayColumnStored() {
+		return toArrayColumnStored(double[][]::new, double[]::new);
+	}
+
+	@Override
+	public double[][] toArrayColumnStored(final IntFunction<double[][]> tableGenerator, final IntFunction<double[]> columnGenerator) {
 		final var countedLength = count();
 		LOGGER.debug("counted length: {}", countedLength);
 		if (countedLength > Integer.MAX_VALUE) {

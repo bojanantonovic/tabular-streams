@@ -17,6 +17,6 @@ public class ObjectTabularStreamWithUnaryMapping<T> extends ObjectTabularStreamW
 
 	@Override
 	public ObjectTabularStreamIterator<T> iterator() {
-		return new UnaryMappingIterator(sourceStream.iterator(), sourceStream.getType(), unaryOperator);
+		return new UnaryMappingIterator<>(sourceStream.iterator(), sourceStream.getType(), unaryOperator);
 	}
 }

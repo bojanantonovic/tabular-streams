@@ -58,7 +58,7 @@ class DoubleTabularStreamTest {
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(2, stream.numberOfLayers());
-		final var table = stream.toArraysColumStored(double[][]::new, double[]::new);
+		final var table = stream.toArrayColumnStored();
 		assertArrayEquals(new double[] {1, 2, 4, 8, 16}, table[0]);
 		assertArrayEquals(new double[] {3, 6, 12, 24, 48}, table[1]);
 	}
@@ -70,7 +70,7 @@ class DoubleTabularStreamTest {
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(2, stream.numberOfLayers());
-		final var table = stream.toArraysColumStored(double[][]::new, double[]::new);
+		final var table = stream.toArrayColumnStored();
 		assertArrayEquals(new double[] {1, 1, 2, 3, 5}, table[0]);
 		assertArrayEquals(new double[] {2, 2, 4, 6, 10}, table[1]);
 	}
@@ -83,7 +83,7 @@ class DoubleTabularStreamTest {
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(2, stream.numberOfLayers());
-		final var table = stream.toArraysColumStored(double[][]::new, double[]::new);
+		final var table = stream.toArrayColumnStored();
 		assertArrayEquals(new double[] {1, 1, 1, 3, 5, 9}, table[0]);
 		assertArrayEquals(new double[] {2, 2, 2, 6, 10, 18}, table[1]);
 	}
