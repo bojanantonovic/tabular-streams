@@ -75,7 +75,6 @@ public abstract class FloatTabularStream extends TabularStream<float[], FloatTab
 		return new FloatTabularStreamWithUnaryMapping(this, operator);
 	}
 
-	// TODO
 	public final <T> ObjectTabularStream<T> mapToObject(final FloatFunction<T> operator, final Class<T> type) {
 		checkRequiredArity(this, 1);
 		return new ObjectTabularStreamWithFloatFunctionMapping<>(this, operator, type);
@@ -125,6 +124,7 @@ public abstract class FloatTabularStream extends TabularStream<float[], FloatTab
 		return result;
 	}
 
+	// TODO wrong location
 	public static float[] mapColumnsUnary(final float[] row, final FloatUnaryOperator operator) {
 		final float[] result = new float[row.length];
 		for (var i = 0; i < row.length; i++) {
@@ -147,21 +147,25 @@ public abstract class FloatTabularStream extends TabularStream<float[], FloatTab
 				.map(FloatTabularStream::of) //
 	}*/
 
-	//	public Optional<float[]> lengthsOfVectors(final FloatTabularStream stream) {
-	//		final FloatUnaryOperator sqrt = x -> (float) Math.sqrt(x);
-	//		final FloatUnaryOperator reciproke = x -> 1f / x;
-	///*
-	//		return squaredLengthsOfVectors(stream) //
-	//				.map(x->mapColumnsUnary(x,sqrt)) //
-	//				.map(x->mapColumnsUnary(x->reciproke))*/
-	//
-	//		final var squaredLengths = stream.mapAllValuesUnary(v -> v * v) //
-	//				.aggregateRowsWithSameOperator(Float::sum) //
-	//				.orElseThrow(IllegalStateException::new);
-	//		final var y2 = mapColumnsUnary(squaredLengths, sqrt);
-	//		final var y3 = mapColumnsUnary(y2, reciproke);
-	//
-	//		FloatTabularStream.of(squaredLengthd).mapAllValuesUnary(sqrt).mapAllValuesUnary(reciproke).
-	//				.map(FloatTabularStream::of) //
-	//	}
+	// TODO
+	public Optional<float[]> lengthsOfVectors(final FloatTabularStream stream) {
+		final FloatUnaryOperator sqrt = x -> (float) Math.sqrt(x);
+		final FloatUnaryOperator reciproke = x -> 1f / x;
+	/*
+			return squaredLengthsOfVectors(stream) //
+					.map(x->mapColumnsUnary(x,sqrt)) //
+					.map(x->mapColumnsUnary(x->reciproke))*/
+
+		final var squaredLengths = stream.mapAllValuesUnary(v -> v * v) //
+				.aggregateRowsWithSameOperator(Float::sum) //
+				.orElseThrow(IllegalStateException::new);
+		final var y2 = mapColumnsUnary(squaredLengths, sqrt);
+		final var y3 = mapColumnsUnary(y2, reciproke);
+		//	FloatTabularStream.of(y3).mapToObject(squaredLengths,x->1d/((float) Math.sqrt(x)));
+/*
+			FloatTabularStream.of(squaredLengthd).mapAllValuesUnary(sqrt).mapAllValuesUnary(reciproke).
+					.map(FloatTabularStream::of) //*/
+
+		return null;
+	}
 }

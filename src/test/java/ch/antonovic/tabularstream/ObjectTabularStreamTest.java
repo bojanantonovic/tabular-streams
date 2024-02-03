@@ -3,6 +3,8 @@ package ch.antonovic.tabularstream;
 import ch.antonovic.tabularstream.function.TernaryOperator;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -207,5 +209,23 @@ class ObjectTabularStreamTest {
 		final var aggregationResult = concatenatedStream.aggregateRows(Integer::max, Integer::min);
 		assertTrue(aggregationResult.isPresent());
 		assertArrayEquals(new Integer[] {12, 5}, aggregationResult.get());
+	}
+
+	@Test
+	void mapToObject() throws IOException {
+		// arrange
+		final var sourceStream = FloatTabularStream.of(FloatTabularStreamTest.a);
+		HtmlExport.toHtmlFile(Path.of("target", "mapToObject_sourceStream.html"), sourceStream);
+		// act
+		final var stream = sourceStream.mapToObject(x -> (int) x, Integer.class);
+		HtmlExport.toHtmlFile(Path.of("target", "mapToObject_mappedStream.html"), stream);
+		// assert
+		assertEquals(1, stream.getNumberOfColumns());
+		assertEquals(4, stream.count());
+		assertFalse(stream.isInfinite());
+		assertFalse(stream.isFiltered());
+		assertEquals(2, stream.numberOfLayers());
+		final var array = stream.toArray(Integer[][]::new);
+		assertArrayEquals(new Integer[][] {{1}, {2}, {3}, {4}}, array);
 	}
 }
