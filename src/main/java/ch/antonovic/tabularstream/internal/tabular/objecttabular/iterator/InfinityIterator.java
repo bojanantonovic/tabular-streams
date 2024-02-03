@@ -1,7 +1,6 @@
 package ch.antonovic.tabularstream.internal.tabular.objecttabular.iterator;
 
 import ch.antonovic.tabularstream.iterator.ObjectTabularStreamIterator;
-import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
 import java.util.function.BinaryOperator;

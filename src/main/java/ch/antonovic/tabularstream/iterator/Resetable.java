@@ -1,4 +1,4 @@
-package ch.antonovic.tabularstream;
+package ch.antonovic.tabularstream.iterator;
 
 public interface Resetable {
 
