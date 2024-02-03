@@ -5,14 +5,14 @@ import org.springframework.lang.Nullable;
 
 import java.util.function.DoubleUnaryOperator;
 
-public class UnaryMappingAllFieldsIterator extends DoubleTabularStreamIteratorWrapper {
+public class UnaryMappingColumnsIterator extends DoubleTabularStreamIteratorWrapper {
 
-	private final DoubleUnaryOperator operator;
+	private final DoubleUnaryOperator[] operators;
 	private @Nullable double[] current;
 
-	public UnaryMappingAllFieldsIterator(final DoubleTabularStreamIterator parentIterator, final DoubleUnaryOperator operator) {
+	public UnaryMappingColumnsIterator(final DoubleTabularStreamIterator parentIterator, final DoubleUnaryOperator[] operators) {
 		super(parentIterator);
-		this.operator = operator;
+		this.operators = operators;
 	}
 
 	@Override
@@ -25,7 +25,7 @@ public class UnaryMappingAllFieldsIterator extends DoubleTabularStreamIteratorWr
 	public double[] next() {
 		final double[] next = parentIterator.next();
 		for (var i = 0; i < next.length; i++) {
-			next[i] = operator.applyAsDouble(next[i]);
+			next[i] = operators[i].applyAsDouble(next[i]);
 		}
 		current = next;
 		return next;

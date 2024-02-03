@@ -2,7 +2,7 @@ package ch.antonovic.tabularstream.internal.tabular.floattabular.stream;
 
 import ch.antonovic.tabularstream.FloatTabularStream;
 import ch.antonovic.tabularstream.function.FloatUnaryOperator;
-import ch.antonovic.tabularstream.internal.tabular.doubletabular.iterator.UnaryMappingAllFieldsIterator;
+import ch.antonovic.tabularstream.internal.tabular.floattabular.iterator.UnaryMappingAllFieldsIterator;
 import ch.antonovic.tabularstream.iterator.FloatTabularStreamIterator;
 
 public class FloatTabularStreamWithAllValuesUnaryMapping extends FloatTabularStreamWrapper {
@@ -15,6 +15,6 @@ public class FloatTabularStreamWithAllValuesUnaryMapping extends FloatTabularStr
 
 	@Override
 	public FloatTabularStreamIterator iterator() {
-		return new UnaryMappingAllFieldsIterator(this.iterator(), operator);
+		return new UnaryMappingAllFieldsIterator(parent.iterator(), operator);
 	}
 }

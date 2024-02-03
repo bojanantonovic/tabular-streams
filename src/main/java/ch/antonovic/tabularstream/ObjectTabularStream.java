@@ -7,6 +7,7 @@ import ch.antonovic.tabularstream.iterator.ObjectTabularStreamIterator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.*;
 
@@ -71,10 +72,24 @@ public abstract class ObjectTabularStream<T> extends TabularStream<T[], ObjectTa
 		checkRequiredArity(this, 1);
 		return new ObjectTabularStreamWithUnaryMapping<>(this, operator);
 	}
+	// TODO
+/*
+	public final <U> ObjectTabularStream<T> mapToObject(final Function<T,U> operator, final Class<U> type) {
+		checkRequiredArity(this, 1);
+		return new ObjectTabularStreamWithObjectFunctionMapping<>(this, operator, type);
+	}*/
 
 	public final ObjectUnaryTabularStream<T> mapBinary(final BinaryOperator<T> operator) {
 		checkRequiredArity(this, 2);
 		return new ObjectTabularStreamWithBinaryMapping<>(this, operator);
+	}
+
+	public ObjectTabularStream<T> mapAllValuesUnary(final UnaryOperator<T> operator) {
+		return new ObjectTabularStreamWithAllValuesUnaryMapping(this, operator);
+	}
+
+	public ObjectTabularStream<T> mapColumnsUnary(final UnaryOperator<T>... operators) {
+		return new ObjectTabularStreamWithAllColumnsUnaryMapping<>(this, operators);
 	}
 
 	public Optional<T[]> aggregateRows(final BinaryOperator<T>... binaryOperators) {
@@ -88,6 +103,8 @@ public abstract class ObjectTabularStream<T> extends TabularStream<T[], ObjectTa
 	@Override
 	public T[][] toArrayColumnStored(final IntFunction<T[][]> tableGenerator, final IntFunction<T[]> columnGenerator) {
 		final var countedLength = count();
+		LOGGER.debug("counted length: {}", countedLength);
+		LOGGER.debug("number of columns: {}", numberOfColumns);
 		if (countedLength > Integer.MAX_VALUE) {
 			throw new IllegalArgumentException("Required array countedLength exceeds array limit in Java!");
 		}
@@ -98,9 +115,10 @@ public abstract class ObjectTabularStream<T> extends TabularStream<T[], ObjectTa
 		}
 		final var iterator = iterator();
 		for (var counter = 0; iterator.hasNext(); counter++) {
-			iterator.next(); // TODO side effect based
+			final var value = iterator.next();
+			LOGGER.debug("value to map: {}", () -> Arrays.toString(value));
 			for (var i = 0; i < numberOfColumns; i++) {
-				result[i][counter] = iterator.valueFromColumn(i);
+				result[i][counter] = value[i];//iterator.valueFromColumn(i);
 			}
 		}
 

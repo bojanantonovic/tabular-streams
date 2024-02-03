@@ -3,6 +3,7 @@ package ch.antonovic.tabularstream;
 import ch.antonovic.tabularstream.function.DoubleTernaryOperator;
 import ch.antonovic.tabularstream.internal.DoubleTabularStreamAggregator;
 import ch.antonovic.tabularstream.internal.tabular.doubletabular.stream.*;
+import ch.antonovic.tabularstream.internal.tabular.objecttabular.stream.ObjectTabularStreamWithDoubleFunctionMapping;
 import ch.antonovic.tabularstream.iterator.DoubleTabularStreamIterator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -66,9 +67,22 @@ public abstract class DoubleTabularStream extends TabularStream<double[], Double
 		return new DoubleTabularStreamWithUnaryMapping(this, operator);
 	}
 
+	public final <T> ObjectTabularStream<T> mapToObject(final DoubleFunction<T> operator, final Class<T> type) {
+		checkRequiredArity(this, 1);
+		return new ObjectTabularStreamWithDoubleFunctionMapping<>(this, operator, type);
+	}
+
 	public final DoubleUnaryTabularStream mapBinary(final DoubleBinaryOperator operator) {
 		checkRequiredArity(this, 2);
 		return new DoubleTabularStreamWithBinaryMapping(this, operator);
+	}
+
+	public DoubleTabularStream mapAllValuesUnary(final DoubleUnaryOperator operator) {
+		return new DoubleTabularStreamWithAllValuesUnaryMapping(this, operator);
+	}
+
+	public DoubleTabularStream mapColumnsUnary(final DoubleUnaryOperator... operators) {
+		return new DoubleTabularStreamWithAllColumnsUnaryMapping(this, operators);
 	}
 
 	public Optional<double[]> aggregateRows(final DoubleBinaryOperator... binaryOperators) {
@@ -87,6 +101,7 @@ public abstract class DoubleTabularStream extends TabularStream<double[], Double
 	public double[][] toArrayColumnStored(final IntFunction<double[][]> tableGenerator, final IntFunction<double[]> columnGenerator) {
 		final var countedLength = count();
 		LOGGER.debug("counted length: {}", countedLength);
+		LOGGER.debug("number of columns: {}", numberOfColumns);
 		if (countedLength > Integer.MAX_VALUE) {
 			throw new IllegalArgumentException("Required array countedLength exceeds array limit in Java!");
 		}
@@ -97,11 +112,10 @@ public abstract class DoubleTabularStream extends TabularStream<double[], Double
 		}
 		final var iterator = iterator();
 		for (var counter = 0; iterator.hasNext(); counter++) {
-			LOGGER.debug("counter: {}", counter);
-			final var next = iterator.next();// TODO side effect based
-			LOGGER.debug("value in iterator: {}", () -> Arrays.toString(next));
+			final var value = iterator.next();
+			LOGGER.debug("value to map: {}", () -> Arrays.toString(value));
 			for (var i = 0; i < numberOfColumns; i++) {
-				result[i][counter] = iterator.valueFromColumn(i);
+				result[i][counter] = value[i];//iterator.valueFromColumn(i);
 			}
 		}
 

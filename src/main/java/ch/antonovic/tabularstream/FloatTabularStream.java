@@ -11,6 +11,7 @@ import ch.antonovic.tabularstream.iterator.FloatTabularStreamIterator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
@@ -89,6 +90,10 @@ public abstract class FloatTabularStream extends TabularStream<float[], FloatTab
 		return new FloatTabularStreamWithAllValuesUnaryMapping(this, operator);
 	}
 
+	public FloatTabularStream mapColumnsUnary(final FloatUnaryOperator... operators) {
+		return new FloatTabularStreamWithAllColumnsUnaryMapping(this, operators);
+	}
+
 	public Optional<float[]> aggregateRows(final FloatBinaryOperator... binaryOperators) {
 		return FloatTabularStreamAggregator.aggregateRows(this, binaryOperators);
 	}
@@ -104,6 +109,8 @@ public abstract class FloatTabularStream extends TabularStream<float[], FloatTab
 	@Override
 	public float[][] toArrayColumnStored(final IntFunction<float[][]> tableGenerator, final IntFunction<float[]> columnGenerator) {
 		final var countedLength = count();
+		LOGGER.debug("counted length: {}", countedLength);
+		LOGGER.debug("number of columns: {}", numberOfColumns);
 		if (countedLength > Integer.MAX_VALUE) {
 			throw new IllegalArgumentException("Required array countedLength exceeds array limit in Java!");
 		}
@@ -114,9 +121,10 @@ public abstract class FloatTabularStream extends TabularStream<float[], FloatTab
 		}
 		final var iterator = iterator();
 		for (var counter = 0; iterator.hasNext(); counter++) {
-			iterator.next(); // TODO side effect based
+			final var value = iterator.next();
+			LOGGER.debug("value to map: {}", () -> Arrays.toString(value));
 			for (var i = 0; i < numberOfColumns; i++) {
-				result[i][counter] = iterator.valueFromColumn(i);
+				result[i][counter] = value[i];//iterator.valueFromColumn(i);
 			}
 		}
 
@@ -124,48 +132,15 @@ public abstract class FloatTabularStream extends TabularStream<float[], FloatTab
 		return result;
 	}
 
-	// TODO wrong location
-	public static float[] mapColumnsUnary(final float[] row, final FloatUnaryOperator operator) {
-		final float[] result = new float[row.length];
-		for (var i = 0; i < row.length; i++) {
-			result[i] = operator.applyAsFloat(row[i]);
-		}
-		return result;
-	}
-/*
-	public static Optional<float[]> squaredLengthsOfVectors(final FloatTabularStream stream) {
-		final FloatUnaryOperator sqrt = x -> (float) Math.sqrt(x);
-		final FloatUnaryOperator reciproke = x -> 1f / x;
-
-		final var floats = stream.mapAllValuesUnary(v -> v * v) //
-				.aggregateRowsWithSameOperator(Float::sum) //
-				.orElseThrow(IllegalStateException::new);
-		final var y2 = mapColumnsUnary(floats, sqrt);
-		final var y3 = mapColumnsUnary(y2, reciproke);
-
-		FloatTabularStream.of(floats).mapAllValuesUnary(sqrt).mapAllValuesUnary(reciproke).
-				.map(FloatTabularStream::of) //
-	}*/
-
-	// TODO
 	public Optional<float[]> lengthsOfVectors(final FloatTabularStream stream) {
 		final FloatUnaryOperator sqrt = x -> (float) Math.sqrt(x);
-		final FloatUnaryOperator reciproke = x -> 1f / x;
-	/*
-			return squaredLengthsOfVectors(stream) //
-					.map(x->mapColumnsUnary(x,sqrt)) //
-					.map(x->mapColumnsUnary(x->reciproke))*/
 
 		final var squaredLengths = stream.mapAllValuesUnary(v -> v * v) //
-				.aggregateRowsWithSameOperator(Float::sum) //
-				.orElseThrow(IllegalStateException::new);
-		final var y2 = mapColumnsUnary(squaredLengths, sqrt);
-		final var y3 = mapColumnsUnary(y2, reciproke);
-		//	FloatTabularStream.of(y3).mapToObject(squaredLengths,x->1d/((float) Math.sqrt(x)));
-/*
-			FloatTabularStream.of(squaredLengthd).mapAllValuesUnary(sqrt).mapAllValuesUnary(reciproke).
-					.map(FloatTabularStream::of) //*/
-
-		return null;
+				.aggregateRowsWithSameOperator(Float::sum);
+		if (squaredLengths.isEmpty()) {
+			return Optional.empty();
+		}
+		final var lengths = FloatArrayMapper.mapColumnsUnary(squaredLengths.get(), sqrt);
+		return Optional.of(lengths);
 	}
 }
