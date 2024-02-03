@@ -1,9 +1,7 @@
-package test.ch.antonovic.tabularstream;
+package ch.antonovic.tabularstream;
 
-import ch.antonovic.tabularstream.DoubleUnaryTabularStream;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.*;
 
 class DoubleUnaryTabularStreamTest {
