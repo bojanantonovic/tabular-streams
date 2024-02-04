@@ -1,11 +1,9 @@
 package ch.antonovic.tabularstream.internal.tabular.objecttabular.iterator;
 
-import ch.antonovic.tabularstream.iterator.ObjectTabularStreamIterator;
-
 import java.lang.reflect.Array;
 import java.util.function.IntFunction;
 
-public class RowsIterator<T> implements ObjectTabularStreamIterator<T> {
+public class RowsIterator<T> extends AbstractObjectTabularStreamIterator<T> {
 
 	private final T[][] table;
 
@@ -56,10 +54,7 @@ public class RowsIterator<T> implements ObjectTabularStreamIterator<T> {
 
 	public T[] extractRow(final IntFunction<T[]> rowGenerator) {
 		final var row = rowGenerator.apply(numberOfColumns);
-
-		for (var i = 0; i < numberOfColumns; i++) {
-			row[i] = valueFromColumn(i);
-		}
+		next(row);
 		return row;
 	}
 }

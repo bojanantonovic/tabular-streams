@@ -2,10 +2,10 @@ package ch.antonovic.tabularstream.internal.tabular.objecttabular.iterator;
 
 import ch.antonovic.tabularstream.iterator.ObjectTabularStreamIterator;
 
-public class ObjectTabularStreamIteratorWrapper<T> implements ObjectTabularStreamIterator<T> {
+public abstract class ObjectTabularStreamIteratorWrapper<T> extends AbstractObjectTabularStreamIterator<T> {
 	protected final ObjectTabularStreamIterator<T> parentIterator;
 
-	public ObjectTabularStreamIteratorWrapper(final ObjectTabularStreamIterator<T> parentIterator) {
+	protected ObjectTabularStreamIteratorWrapper(final ObjectTabularStreamIterator<T> parentIterator) {
 		this.parentIterator = parentIterator;
 	}
 

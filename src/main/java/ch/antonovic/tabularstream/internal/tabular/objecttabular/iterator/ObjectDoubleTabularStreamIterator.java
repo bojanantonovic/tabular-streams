@@ -1,12 +1,11 @@
 package ch.antonovic.tabularstream.internal.tabular.objecttabular.iterator;
 
 import ch.antonovic.tabularstream.iterator.DoubleTabularStreamIterator;
-import ch.antonovic.tabularstream.iterator.ObjectTabularStreamIterator;
 
 import java.lang.reflect.Array;
 import java.util.function.DoubleFunction;
 
-public class ObjectDoubleTabularStreamIterator<T> implements ObjectTabularStreamIterator<T> {
+public class ObjectDoubleTabularStreamIterator<T> extends AbstractObjectTabularStreamIterator<T> {
 	private final DoubleTabularStreamIterator sourceIterator;
 	private final DoubleFunction<T> doubleFunction;
 

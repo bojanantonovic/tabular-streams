@@ -1,12 +1,10 @@
 package ch.antonovic.tabularstream.internal.tabular.objecttabular.iterator;
 
-import ch.antonovic.tabularstream.iterator.ObjectTabularStreamIterator;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class ObjectTabularStreamIteratorByRecursion<T> implements ObjectTabularStreamIterator<T> {
+public abstract class ObjectTabularStreamIteratorByRecursion<T> extends AbstractObjectTabularStreamIterator<T> {
 	protected final List<T[]> cache = new ArrayList<>();
 	protected final int numberOfColumns;
 
@@ -38,8 +36,8 @@ public abstract class ObjectTabularStreamIteratorByRecursion<T> implements Objec
 
 	@Override
 	public void reset() {
-		//cache.clear();
-		//inizializeCache();
+		cache.clear();
+		inizializeCache();
 		actualPosition = 0;
 	}
 

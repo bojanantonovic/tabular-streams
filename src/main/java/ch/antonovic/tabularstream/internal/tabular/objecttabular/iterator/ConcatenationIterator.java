@@ -14,4 +14,9 @@ public class ConcatenationIterator<T> extends AbstractConcatenationIterator<T[],
 	public T valueFromColumn(final int index) {
 		return getCurrentStream().valueFromColumn(index);
 	}
+
+	@Override
+	public void next(final T[] target) {
+		getCurrentStream().next(target);
+	}
 }

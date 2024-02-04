@@ -1,11 +1,10 @@
 package ch.antonovic.tabularstream.internal.tabular.objecttabular.iterator;
 
-import ch.antonovic.tabularstream.iterator.ObjectTabularStreamIterator;
 import org.springframework.lang.Nullable;
 
 import java.util.function.Supplier;
 
-public class InfinityIterator<T> implements ObjectTabularStreamIterator<T> {
+public class InfinityIterator<T> extends AbstractObjectTabularStreamIterator<T> {
 	private final Supplier<T[]> supplier;
 
 	private int actualPosition = 0;
