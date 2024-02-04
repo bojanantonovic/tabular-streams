@@ -24,6 +24,11 @@ public class FromFloatTabularStreamIterator<T> implements ObjectTabularStreamIte
 	}
 
 	@Override
+	public void moveCursorToNextPosition() {
+		sourceIterator.moveCursorToNextPosition();
+	}
+
+	@Override
 	public void incrementPositionWithoutReading() {
 		sourceIterator.incrementPositionWithoutReading();
 	}
@@ -34,7 +39,7 @@ public class FromFloatTabularStreamIterator<T> implements ObjectTabularStreamIte
 	}
 
 	@Override
-	public T valueFromColumn(final int index) {
+	public T cachedValueFromColumn(final int index) {
 		assert currentValue != null;
 		return currentValue[index];
 	}
@@ -63,6 +68,11 @@ public class FromFloatTabularStreamIterator<T> implements ObjectTabularStreamIte
 	@Override
 	public boolean hasNext() {
 		return sourceIterator.hasNext();
+	}
+
+	@Override
+	public T valueFromColumn(final int index) {
+		return floatFunction.apply(sourceIterator.valueFromColumn(index));
 	}
 
 	@Override

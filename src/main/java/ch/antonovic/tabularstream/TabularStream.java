@@ -1,12 +1,16 @@
 package ch.antonovic.tabularstream;
 
 import ch.antonovic.tabularstream.iterator.TabularStreamIterator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
 
 public abstract class TabularStream<R, I extends TabularStreamIterator<R>> {
+
+	private static final Logger LOGGER = LogManager.getLogger(TabularStream.class);
 
 	protected final int numberOfColumns;
 
@@ -33,20 +37,24 @@ public abstract class TabularStream<R, I extends TabularStreamIterator<R>> {
 	public abstract R[] toArrayColumnStored(IntFunction<R[]> tableGenerator, IntFunction<R> columnGenerator);
 
 	public long count() {
-		final var iterator = iterator();
-		var counter = 0L;
-		while (iterator.hasNext()) {
-			iterator.incrementPositionWithoutReading();
-			counter++;
+		if (isInfinite()) {
+			throw new IllegalArgumentException("This stream is infinite.");
 		}
-
+		final var iterator = iterator();
+		LOGGER.debug("iterator: {}", () -> iterator.getClass().getSimpleName());
+		while (iterator.hasNext()) {
+			iterator.moveCursorToNextPosition();
+			LOGGER.debug("number of delivered elements so far: {}", iterator::numberOfDeliveredElements);
+		}
+		final var result = iterator.numberOfDeliveredElements();
+		LOGGER.debug("number of delivered elements so far: {}", result);
 		iterator.reset();
-
-		return counter;
+		return result;
 	}
 
 	public R[] toArray(final IntFunction<R[]> generator) {
 		final var countedLength = count();
+		LOGGER.debug("counted length: {}", countedLength);
 		if (countedLength > Integer.MAX_VALUE) {
 			throw new IllegalArgumentException("Required array countedLength exceeds array limit in Java!");
 		}
@@ -55,6 +63,7 @@ public abstract class TabularStream<R, I extends TabularStreamIterator<R>> {
 		final var iterator = iterator();
 		for (var counter = 0; iterator.hasNext(); counter++) {
 			final var next = iterator.next();
+			LOGGER.debug("next value: {}", next);
 			result[counter] = next;
 		}
 

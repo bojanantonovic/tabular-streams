@@ -14,11 +14,16 @@ public class BinaryMappingIterator extends FloatTabularStreamIteratorWrapper {
 	}
 
 	@Override
-	public float[] current() {
+	public float valueFromColumn(final int index) {
 		currentValue = binaryOperator.applyAsFloat( //
 				parentIterator.valueFromColumn(0), //
 				parentIterator.valueFromColumn(1));
-		return new float[] {currentValue};
+		return currentValue;
+	}
+
+	@Override
+	public float[] current() {
+		return new float[] {valueFromColumn(0)};
 	}
 
 	@Override
@@ -29,7 +34,7 @@ public class BinaryMappingIterator extends FloatTabularStreamIteratorWrapper {
 	}
 
 	@Override
-	public float valueFromColumn(final int index) {
+	public float cachedValueFromColumn(final int index) {
 		if (index > 0) {
 			throw new IllegalArgumentException();
 		}

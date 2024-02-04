@@ -19,6 +19,16 @@ public class PredicateIterator extends FloatTabularStreamIteratorWrapper {
 	}
 
 	@Override
+	public void moveCursorToNextPosition() {
+		composablePredicateIterator.moveCursorToNextPosition();
+	}
+
+	@Override
+	public long numberOfDeliveredElements() {
+		return composablePredicateIterator.numberOfDeliveredElements();
+	}
+
+	@Override
 	public float[] next() {
 		return composablePredicateIterator.next();
 	}

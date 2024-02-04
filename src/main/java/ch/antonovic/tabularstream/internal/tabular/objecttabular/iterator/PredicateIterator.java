@@ -14,6 +14,16 @@ public class PredicateIterator<T> extends ObjectTabularStreamIteratorWrapper<T> 
 	}
 
 	@Override
+	public long numberOfDeliveredElements() {
+		return composablePredicateIterator.numberOfDeliveredElements();
+	}
+
+	@Override
+	public void moveCursorToNextPosition() {
+		composablePredicateIterator.moveCursorToNextPosition();
+	}
+	
+	@Override
 	public boolean hasNext() {
 		return composablePredicateIterator.hasNext();
 	}

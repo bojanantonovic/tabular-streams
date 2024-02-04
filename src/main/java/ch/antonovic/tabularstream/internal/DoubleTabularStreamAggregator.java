@@ -36,7 +36,6 @@ public class DoubleTabularStreamAggregator {
 			return Optional.empty();
 		}
 		final var iterator = stream.iterator();
-		iterator.hasNext();
 		final var resultRow = iterator.next().clone();
 		LOGGER.debug("first value: {}", () -> Arrays.toString(resultRow));
 		for (var position = 1L; iterator.hasNext(); position++) {

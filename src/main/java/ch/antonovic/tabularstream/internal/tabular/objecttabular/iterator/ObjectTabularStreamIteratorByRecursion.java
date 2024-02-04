@@ -34,6 +34,14 @@ public abstract class ObjectTabularStreamIteratorByRecursion<T> implements Objec
 	}
 
 	@Override
+	public T cachedValueFromColumn(final int index) {
+		if (numberOfDeliveredElements() == 0) {
+			throw new IllegalStateException("next() has not been called");
+		}
+		return current()[index];
+	}
+
+	@Override
 	public T mapUnary(final UnaryOperator<T> operator) {
 		throw new UnsupportedOperationException(); // TODO cardinality check if a Map is a source?
 	}
@@ -55,7 +63,7 @@ public abstract class ObjectTabularStreamIteratorByRecursion<T> implements Objec
 
 	@Override
 	public long numberOfDeliveredElements() {
-		return cache.size();
+		return actualPosition;
 	}
 
 	@Override
@@ -75,15 +83,18 @@ public abstract class ObjectTabularStreamIteratorByRecursion<T> implements Objec
 	}
 
 	@Override
-	public T[] next() {
-		if (actualPosition < cache.size()) {
-			actualPosition++;
-			return cache.getLast();
-		}
-		final var next = computeNextValue();
-		cache.add(next);
+	public void moveCursorToNextPosition() {
 		actualPosition++;
-		return next;
+		if (actualPosition >= cache.size()) {
+			cache.add(computeNextValue());
+		}
+	}
+
+	@Override
+	public T[] next() {
+		final var result = cache.get(actualPosition);
+		moveCursorToNextPosition();
+		return result;
 	}
 
 	protected abstract T[] computeNextValue();

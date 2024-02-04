@@ -12,7 +12,7 @@ public class InfinityIterator<T> implements ObjectTabularStreamIterator<T> {
 
 	private int actualPosition = 0;
 
-	private @Nullable T[] currentValue;
+	private @Nullable T[] cachedCurrentValue;
 
 	public InfinityIterator(final Supplier<T[]> supplier) {
 		this.supplier = supplier;
@@ -38,20 +38,30 @@ public class InfinityIterator<T> implements ObjectTabularStreamIterator<T> {
 		if (actualPosition == 0) {
 			throw new IllegalStateException("next() has not been called");
 		}
-		assert currentValue != null;
-		return currentValue;
+		assert cachedCurrentValue != null;
+		return cachedCurrentValue;
+	}
+
+	@Override
+	public void moveCursorToNextPosition() {
+		cachedCurrentValue = supplier.get();
+		actualPosition++;
 	}
 
 	@Override
 	public T valueFromColumn(final int index) {
-		return currentValue[index];
+		return cachedCurrentValue[index];
+	}
+
+	@Override
+	public T cachedValueFromColumn(final int index) {
+		return cachedCurrentValue[index];
 	}
 
 	@Override
 	public T[] next() {
-		incrementPositionWithoutReading();
-		currentValue = supplier.get();
-		return current();
+		moveCursorToNextPosition();
+		return cachedCurrentValue;
 	}
 
 	@Override
@@ -67,6 +77,6 @@ public class InfinityIterator<T> implements ObjectTabularStreamIterator<T> {
 	@Override
 	public void reset() {
 		actualPosition = 0;
-		currentValue = null;
+		cachedCurrentValue = null;
 	}
 }

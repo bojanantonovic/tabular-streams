@@ -5,6 +5,7 @@ import ch.antonovic.tabularstream.iterator.TabularStreamIterator;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public abstract class AbstractConcatenationIterator<R, I extends TabularStreamIterator<R>> implements TabularStreamIterator<R> {
 	protected final List<I> iterators;
@@ -35,46 +36,39 @@ public abstract class AbstractConcatenationIterator<R, I extends TabularStreamIt
 	}
 
 	@Override
-	public long numberOfDeliveredElements() {
+	public final long numberOfDeliveredElements() {
 		return iterators.stream() //
 				.mapToLong(TabularStreamIterator::numberOfDeliveredElements) //
 				.sum();
 	}
 
 	@Override
-	public boolean hasNext() {
-		if (currentStreamIndex == numberOfIterators) {
-			return false;
+	public final void moveCursorToNextPosition() {
+		if (currentStreamIndex < numberOfIterators && getCurrentStream().hasNext()) {
+			getCurrentStream().moveCursorToNextPosition();
+		} else {
+			currentStreamIndex++;
+			if (currentStreamIndex >= numberOfIterators) {
+				throw new NoSuchElementException();
+			}
+			getCurrentStream().moveCursorToNextPosition();
 		}
+	}
 
-		if (getCurrentStream().hasNext()) {
+	@Override
+	public boolean hasNext() {
+		if (currentStreamIndex < numberOfIterators && getCurrentStream().hasNext()) {
 			return true;
 		}
-
-		currentStreamIndex++;
-
-		if (currentStreamIndex == numberOfIterators) {
-			return false;
+		if (currentStreamIndex <= numberOfIterators - 2) {
+			return iterators.get(currentStreamIndex + 1).hasNext();
 		}
 
-		return getCurrentStream().hasNext();
+		return false;
 	}
 
 	@Override
 	public void incrementPositionWithoutReading() {
-		if (currentStreamIndex == numberOfIterators) {
-			return;
-		}
-
-		if (getCurrentStream().hasNext()) {
-			getCurrentStream().incrementPositionWithoutReading();
-		} else {
-			currentStreamIndex++;
-			if (currentStreamIndex == numberOfIterators) {
-				return;
-			}
-
-			getCurrentStream().incrementPositionWithoutReading();
-		}
+		moveCursorToNextPosition();
 	}
 }

@@ -11,8 +11,6 @@ public class UnaryMappingIterator<T> extends ObjectTabularStreamIteratorWrapper<
 
 	private final IntFunction<T[]> arrayCreator;
 
-	private T currentValue;
-
 	public UnaryMappingIterator(final ObjectTabularStreamIterator<T> parentIterator, final Class<T> type, final UnaryOperator<T> unaryOperator) {
 		super(parentIterator);
 		this.unaryOperator = unaryOperator;
@@ -20,19 +18,15 @@ public class UnaryMappingIterator<T> extends ObjectTabularStreamIteratorWrapper<
 	}
 
 	@Override
-	public T[] next() {
-		currentValue = unaryOperator.apply(parentIterator.valueFromColumn(0));
-		final var nextValue = arrayCreator.apply(1);
-		nextValue[0] = currentValue;
-		incrementPositionWithoutReading();
-		return nextValue;
+	public T valueFromColumn(final int index) {
+		return unaryOperator.apply(parentIterator.valueFromColumn(0));
 	}
 
 	@Override
-	public T valueFromColumn(final int index) {
-		if (index > 0) {
-			throw new IllegalArgumentException();
-		}
-		return currentValue;
+	public T[] next() {
+		final var nextValue = arrayCreator.apply(1);
+		nextValue[0] = valueFromColumn(0);
+		moveCursorToNextPosition();
+		return nextValue;
 	}
 }

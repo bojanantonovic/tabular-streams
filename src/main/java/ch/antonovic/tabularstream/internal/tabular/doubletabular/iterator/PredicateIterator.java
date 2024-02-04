@@ -24,6 +24,16 @@ public class PredicateIterator extends DoubleTabularStreamIteratorWrapper {
 	}
 
 	@Override
+	public void moveCursorToNextPosition() {
+		composablePredicateIterator.moveCursorToNextPosition();
+	}
+
+	@Override
+	public long numberOfDeliveredElements() {
+		return composablePredicateIterator.numberOfDeliveredElements();
+	}
+
+	@Override
 	public void incrementPositionWithoutReading() {
 		composablePredicateIterator.incrementPositionWithoutReading();
 	}

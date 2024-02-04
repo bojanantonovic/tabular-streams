@@ -18,6 +18,11 @@ public class DoubleTabularStreamIteratorWrapper implements DoubleTabularStreamIt
 	}
 
 	@Override
+	public double cachedValueFromColumn(final int index) {
+		return parentIterator.cachedValueFromColumn(index);
+	}
+
+	@Override
 	public boolean hasNext() {
 		return parentIterator.hasNext();
 	}
@@ -31,21 +36,6 @@ public class DoubleTabularStreamIteratorWrapper implements DoubleTabularStreamIt
 	public double[] next() {
 		return parentIterator.next();
 	}
-/*
-	@Override
-	public double[] extractRow(IntFunction<double[]> rowGenerator) {
-		return parent.extractRow(rowGenerator);
-	}
-
-	@Override
-	public <T> T mapRow(Function<double[], T> rowMapper) {
-		return parent.mapRow(rowMapper);
-	}
-
-	@Override
-	public double mapRow(ToDoubleFunction<double[]> rowReducer) {
-		return parent.mapRow(rowReducer);
-	}*/
 
 	@Override
 	public void reset() {
@@ -55,6 +45,11 @@ public class DoubleTabularStreamIteratorWrapper implements DoubleTabularStreamIt
 	@Override
 	public long numberOfDeliveredElements() {
 		return parentIterator.numberOfDeliveredElements();
+	}
+
+	@Override
+	public void moveCursorToNextPosition() {
+		parentIterator.moveCursorToNextPosition();
 	}
 
 	@Override

@@ -8,6 +8,8 @@ import java.util.function.UnaryOperator;
 public class UnaryMappingColumnsIterator<T> extends ObjectTabularStreamIteratorWrapper<T> {
 
 	private final UnaryOperator<T>[] operators;
+
+	@Deprecated
 	private @Nullable T[] current;
 
 	public UnaryMappingColumnsIterator(final ObjectTabularStreamIterator<T> parentIterator, final UnaryOperator<T>[] operators) {
@@ -19,6 +21,11 @@ public class UnaryMappingColumnsIterator<T> extends ObjectTabularStreamIteratorW
 	public T[] current() {
 		assert current != null;
 		return current;
+	}
+
+	@Override
+	public T valueFromColumn(final int index) {
+		return operators[index].apply(parentIterator.valueFromColumn(index));
 	}
 
 	@Override

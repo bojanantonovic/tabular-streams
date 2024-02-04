@@ -22,6 +22,11 @@ public class UnaryMappingAllFieldsIterator extends DoubleTabularStreamIteratorWr
 	}
 
 	@Override
+	public double valueFromColumn(final int index) {
+		return operator.applyAsDouble(parentIterator.valueFromColumn(index));
+	}
+
+	@Override
 	public double[] next() {
 		final double[] next = parentIterator.next();
 		for (var i = 0; i < next.length; i++) {

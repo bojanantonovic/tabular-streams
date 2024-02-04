@@ -8,11 +8,17 @@ import java.util.function.UnaryOperator;
 public class UnaryMappingAllFieldsIterator<T> extends ObjectTabularStreamIteratorWrapper<T> {
 
 	private final UnaryOperator<T> operator;
+	@Deprecated
 	private @Nullable T[] current;
 
 	public UnaryMappingAllFieldsIterator(final ObjectTabularStreamIterator<T> parentIterator, final UnaryOperator<T> operator) {
 		super(parentIterator);
 		this.operator = operator;
+	}
+
+	@Override
+	public T valueFromColumn(final int index) {
+		return operator.apply(parentIterator.valueFromColumn(index));
 	}
 
 	@Override

@@ -54,7 +54,7 @@ class FloatTabularStreamTest {
 	}
 
 	@Test
-	void generateRecursiveStream_OneStepDoubling_limit() {
+	void generateRecursiveStream_oneStepDoubling_limit() {
 		final var stream = FloatTabularStream.generateRecursiveStream(new float[] {1, 3}, x -> x * 2).limit(5);
 		assertEquals(2, stream.getNumberOfColumns());
 		assertFalse(stream.isInfinite());

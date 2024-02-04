@@ -21,6 +21,11 @@ public class UnaryMappingAllFieldsIterator extends FloatTabularStreamIteratorWra
 	}
 
 	@Override
+	public float valueFromColumn(final int index) {
+		return operator.applyAsFloat(parentIterator.valueFromColumn(index));
+	}
+
+	@Override
 	public float[] next() {
 		final float[] next = parentIterator.next();
 		for (var i = 0; i < next.length; i++) {

@@ -31,6 +31,14 @@ public abstract class DoubleTabularStreamIteratorByRecursion implements DoubleTa
 	}
 
 	@Override
+	public double cachedValueFromColumn(final int index) {
+		if (numberOfDeliveredElements() == 0) {
+			throw new IllegalStateException("next() has not been called");
+		}
+		return current()[index];
+	}
+
+	@Override
 	public double mapUnary(final DoubleUnaryOperator operator) {
 		throw new UnsupportedOperationException(); // TODO cardinality check if a Map is a source?
 	}
@@ -52,7 +60,7 @@ public abstract class DoubleTabularStreamIteratorByRecursion implements DoubleTa
 
 	@Override
 	public long numberOfDeliveredElements() {
-		return cache.size();
+		return actualPosition;
 	}
 
 	@Override
@@ -72,15 +80,18 @@ public abstract class DoubleTabularStreamIteratorByRecursion implements DoubleTa
 	}
 
 	@Override
-	public double[] next() {
-		if (actualPosition < cache.size()) {
-			actualPosition++;
-			return cache.getLast();
-		}
-		final var next = computeNextValue();
-		cache.add(next);
+	public void moveCursorToNextPosition() {
 		actualPosition++;
-		return next;
+		if (actualPosition >= cache.size()) {
+			cache.add(computeNextValue());
+		}
+	}
+
+	@Override
+	public double[] next() {
+		final var result = cache.get(actualPosition);
+		moveCursorToNextPosition();
+		return result;
 	}
 
 	protected abstract double[] computeNextValue();

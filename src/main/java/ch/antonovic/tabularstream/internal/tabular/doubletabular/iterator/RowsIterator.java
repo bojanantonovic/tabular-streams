@@ -22,7 +22,7 @@ public class RowsIterator implements DoubleTabularStreamIterator {
 	}
 
 	@Override
-	public double valueFromColumn(final int index) {
+	public double cachedValueFromColumn(final int index) {
 		return table[index][actualPosition];
 	}
 
@@ -32,12 +32,18 @@ public class RowsIterator implements DoubleTabularStreamIterator {
 	}
 
 	@Override
-	public void incrementPositionWithoutReading() {
+	public double valueFromColumn(final int index) {
+		return table[index][actualPosition];
+	}
+
+	@Override
+	public void moveCursorToNextPosition() {
 		actualPosition++;
-/*
-if (actualPosition >= numberOfRows) {
-	throw new NoSuchElementException();
-}*/
+	}
+
+	@Override
+	public void incrementPositionWithoutReading() {
+		moveCursorToNextPosition();
 	}
 
 	@Override

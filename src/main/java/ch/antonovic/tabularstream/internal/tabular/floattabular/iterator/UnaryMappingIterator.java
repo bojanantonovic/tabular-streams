@@ -15,8 +15,13 @@ public class UnaryMappingIterator extends FloatTabularStreamIteratorWrapper {
 
 	@Override
 	public float[] current() {
+		return new float[] {valueFromColumn(0)};
+	}
+
+	@Override
+	public float valueFromColumn(final int index) {
 		currentValue = unaryOperator.applyAsFloat(parentIterator.valueFromColumn(0));
-		return new float[] {currentValue};
+		return currentValue;
 	}
 
 	@Override
@@ -27,7 +32,7 @@ public class UnaryMappingIterator extends FloatTabularStreamIteratorWrapper {
 	}
 
 	@Override
-	public float valueFromColumn(final int index) {
+	public float cachedValueFromColumn(final int index) {
 		if (index > 0) {
 			throw new IllegalArgumentException();
 		}

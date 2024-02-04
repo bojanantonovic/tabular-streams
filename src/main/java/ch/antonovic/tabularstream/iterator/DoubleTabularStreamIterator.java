@@ -7,6 +7,9 @@ public interface DoubleTabularStreamIterator extends TabularStreamIterator<doubl
 
 	double valueFromColumn(int index);
 
+	@Deprecated
+	double cachedValueFromColumn(int index);
+
 	// shortcuts for efficiency
 	double mapUnary(DoubleUnaryOperator operator);
 	double mapBinary(DoubleBinaryOperator operator);

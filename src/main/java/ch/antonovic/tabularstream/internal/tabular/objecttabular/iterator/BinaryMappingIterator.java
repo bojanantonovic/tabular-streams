@@ -20,18 +20,23 @@ public class BinaryMappingIterator<T> extends ObjectTabularStreamIteratorWrapper
 	}
 
 	@Override
-	public T[] next() {
+	public T valueFromColumn(final int index) {
 		currentValue = binaryOperator.apply( //
 				parentIterator.valueFromColumn(0), //
 				parentIterator.valueFromColumn(1));
+		return currentValue;
+	}
+
+	@Override
+	public T[] next() {
 		final var nextValue = arrayCreator.apply(1);
-		nextValue[0] = currentValue;
+		nextValue[0] = valueFromColumn(0);
 		incrementPositionWithoutReading();
 		return nextValue;
 	}
 
 	@Override
-	public T valueFromColumn(final int index) {
+	public T cachedValueFromColumn(final int index) {
 		if (index > 0) {
 			throw new IllegalArgumentException();
 		}

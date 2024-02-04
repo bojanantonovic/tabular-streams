@@ -18,6 +18,11 @@ public class ObjectTabularStreamIteratorWrapper<T> implements ObjectTabularStrea
 	}
 
 	@Override
+	public T cachedValueFromColumn(final int index) {
+		return parentIterator.cachedValueFromColumn(index);
+	}
+
+	@Override
 	public boolean hasNext() {
 		return parentIterator.hasNext();
 	}
@@ -25,6 +30,11 @@ public class ObjectTabularStreamIteratorWrapper<T> implements ObjectTabularStrea
 	@Override
 	public T[] current() {
 		return parentIterator.current();
+	}
+
+	@Override
+	public void moveCursorToNextPosition() {
+		parentIterator.moveCursorToNextPosition();
 	}
 
 	@Override

@@ -25,6 +25,11 @@ public class RowsIterator implements FloatTabularStreamIterator {
 	}
 
 	@Override
+	public float cachedValueFromColumn(final int index) {
+		return table[index][actualPosition];
+	}
+
+	@Override
 	public float valueFromColumn(final int index) {
 		return table[index][actualPosition];
 	}
@@ -35,12 +40,13 @@ public class RowsIterator implements FloatTabularStreamIterator {
 	}
 
 	@Override
-	public void incrementPositionWithoutReading() {
+	public void moveCursorToNextPosition() {
 		actualPosition++;
-/*
-if (actualPosition >= numberOfRows) {
-	throw new NoSuchElementException();
-}*/
+	}
+
+	@Override
+	public void incrementPositionWithoutReading() {
+		moveCursorToNextPosition();
 	}
 
 	@Override
@@ -70,7 +76,7 @@ if (actualPosition >= numberOfRows) {
 		if (numberOfColumns != 1) {
 			throw new IllegalArgumentException("Stream has a different cardinality than 1: " + numberOfColumns);
 		}
-		final var rowValue = valueFromColumn(0);
+		final var rowValue = cachedValueFromColumn(0);
 		return operator.applyAsFloat(rowValue);
 	}
 
@@ -91,8 +97,8 @@ if (actualPosition >= numberOfRows) {
 		if (numberOfColumns != 2) {
 			throw new IllegalArgumentException("Stream has a different cardinality than 2: " + numberOfColumns);
 		}
-		final var y1 = valueFromColumn(0);
-		final var y2 = valueFromColumn(1);
+		final var y1 = cachedValueFromColumn(0);
+		final var y2 = cachedValueFromColumn(1);
 		return operator.applyAsFloat(y1, y2);
 	}
 
@@ -113,7 +119,7 @@ if (actualPosition >= numberOfRows) {
 		final var row = rowGenerator.apply(numberOfColumns);
 
 		for (var i = 0; i < numberOfColumns; i++) {
-			row[i] = valueFromColumn(i);
+			row[i] = cachedValueFromColumn(i);
 		}
 		return row;
 	}

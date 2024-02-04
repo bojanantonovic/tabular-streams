@@ -32,7 +32,7 @@ public class InfinityIterator implements DoubleTabularStreamIterator {
 	}
 
 	@Override
-	public double valueFromColumn(final int index) {
+	public double cachedValueFromColumn(final int index) {
 		return currentValue[index];
 	}
 
@@ -45,10 +45,20 @@ public class InfinityIterator implements DoubleTabularStreamIterator {
 	}
 
 	@Override
-	public double[] next() {
-		incrementPositionWithoutReading();
+	public double valueFromColumn(final int index) {
+		return currentValue[index];
+	}
+
+	@Override
+	public void moveCursorToNextPosition() {
 		currentValue = supplier.get();
-		return current();
+		actualPosition++;
+	}
+
+	@Override
+	public double[] next() {
+		moveCursorToNextPosition();
+		return currentValue;
 	}
 
 	@Override

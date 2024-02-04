@@ -15,17 +15,22 @@ public class BinaryMappingIterator extends DoubleTabularStreamIteratorWrapper {
 	}
 
 	@Override
-	public double[] next() {
+	public double valueFromColumn(final int index) {
 		currentValue = binaryOperator.applyAsDouble( //
 				parentIterator.valueFromColumn(0), //
 				parentIterator.valueFromColumn(1));
-		final var nextValue = new double[] {currentValue};
+		return currentValue;
+	}
+
+	@Override
+	public double[] next() {
+		final var nextValue = new double[] {valueFromColumn(0)};
 		incrementPositionWithoutReading();
 		return nextValue;
 	}
 
 	@Override
-	public double valueFromColumn(final int index) {
+	public double cachedValueFromColumn(final int index) {
 		if (index > 0) {
 			throw new IllegalArgumentException();
 		}

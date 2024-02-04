@@ -54,7 +54,7 @@ class DoubleTabularStreamTest {
 	}
 
 	@Test
-	void generateRecursiveStream_OneStepDoubling_limit() {
+	void generateRecursiveStream_oneStepDoubling_limit() {
 		final var stream = DoubleTabularStream.generateRecursiveStream(new double[] {1, 3}, x -> x * 2).limit(5);
 		assertEquals(2, stream.getNumberOfColumns());
 		assertFalse(stream.isInfinite());

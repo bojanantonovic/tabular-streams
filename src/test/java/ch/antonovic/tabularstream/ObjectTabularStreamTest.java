@@ -52,9 +52,10 @@ class ObjectTabularStreamTest {
 	}
 
 	@Test
-	void generateRecursiveStream_OneStepDoubling_limit() {
+	void generateRecursiveStream_oneStepDoubling_limit() {
 		final var stream = ObjectTabularStream.generateRecursiveStream(new Integer[] {1, 3}, x -> x * 2).limit(5);
 		assertEquals(2, stream.getNumberOfColumns());
+		assertEquals(5, stream.count());
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(2, stream.numberOfLayers());
@@ -67,6 +68,7 @@ class ObjectTabularStreamTest {
 	void generateRecursiveStream_twoStepsWithFibonacci_limit() {
 		final var stream = ObjectTabularStream.generateRecursiveStream(Integer.class, new Integer[] {1, 2}, new Integer[] {1, 2}, Integer::sum).limit(5);
 		assertEquals(2, stream.getNumberOfColumns());
+		assertEquals(5, stream.count());
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(2, stream.numberOfLayers());
@@ -78,8 +80,10 @@ class ObjectTabularStreamTest {
 	@Test
 	void generateRecursiveStream_threeStepsWithThreebonacci_limit() {
 		final TernaryOperator<Integer> ternaryOperator = (a, b, c) -> a + b + c;
-		final var stream = ObjectTabularStream.generateRecursiveStream(Integer.class, new Integer[] {1, 2}, new Integer[] {1, 2}, new Integer[] {1, 2}, ternaryOperator).limit(6);
+		final var limit = 6;
+		final var stream = ObjectTabularStream.generateRecursiveStream(Integer.class, new Integer[] {1, 2}, new Integer[] {1, 2}, new Integer[] {1, 2}, ternaryOperator).limit(limit);
 		assertEquals(2, stream.getNumberOfColumns());
+		assertEquals(limit, stream.count());
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(2, stream.numberOfLayers());

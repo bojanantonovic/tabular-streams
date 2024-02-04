@@ -33,7 +33,12 @@ public class InfinityIterator implements FloatTabularStreamIterator {
 	}
 
 	@Override
-	public float valueFromColumn(final int index) {
+	public float cachedValueFromColumn(final int index) {
+		return currentValue[index];
+	}
+
+	@Override
+	public float valueFromColumn(int index) {
 		return currentValue[index];
 	}
 
@@ -46,10 +51,15 @@ public class InfinityIterator implements FloatTabularStreamIterator {
 	}
 
 	@Override
-	public float[] next() {
-		incrementPositionWithoutReading();
+	public void moveCursorToNextPosition() {
 		currentValue = supplier.get();
-		return current();
+		actualPosition++;
+	}
+
+	@Override
+	public float[] next() {
+		moveCursorToNextPosition();
+		return currentValue;
 	}
 
 	@Override

@@ -1,8 +1,8 @@
 package ch.antonovic.tabularstream.internal.tabular.floattabular.iterator;
 
+import ch.antonovic.tabularstream.TabularStream;
 import ch.antonovic.tabularstream.function.FloatBinaryOperator;
 import ch.antonovic.tabularstream.function.FloatUnaryOperator;
-import ch.antonovic.tabularstream.TabularStream;
 import ch.antonovic.tabularstream.internal.tabular.AbstractConcatenationIterator;
 import ch.antonovic.tabularstream.iterator.FloatTabularStreamIterator;
 
@@ -17,6 +17,11 @@ public class ConcatenationIterator extends AbstractConcatenationIterator<float[]
 	@Override
 	public float valueFromColumn(final int index) {
 		return getCurrentStream().valueFromColumn(index);
+	}
+
+	@Override
+	public float cachedValueFromColumn(final int index) {
+		return getCurrentStream().cachedValueFromColumn(index);
 	}
 
 	@Override

@@ -23,6 +23,14 @@ public abstract class FloatTabularStreamIteratorByRecursion implements FloatTabu
 	}
 
 	@Override
+	public float cachedValueFromColumn(final int index) {
+		if (numberOfDeliveredElements() == 0) {
+			throw new IllegalStateException("next() has not been called");
+		}
+		return current()[index];
+	}
+
+	@Override
 	public float valueFromColumn(final int index) {
 		if (numberOfDeliveredElements() == 0) {
 			throw new IllegalStateException("next() has not been called");
@@ -52,7 +60,7 @@ public abstract class FloatTabularStreamIteratorByRecursion implements FloatTabu
 
 	@Override
 	public long numberOfDeliveredElements() {
-		return cache.size();
+		return actualPosition;
 	}
 
 	@Override
@@ -72,15 +80,18 @@ public abstract class FloatTabularStreamIteratorByRecursion implements FloatTabu
 	}
 
 	@Override
-	public float[] next() {
-		if (actualPosition < cache.size()) {
-			actualPosition++;
-			return cache.getLast();
-		}
-		final var next = computeNextValue();
-		cache.add(next);
+	public void moveCursorToNextPosition() {
 		actualPosition++;
-		return next;
+		if (actualPosition >= cache.size()) {
+			cache.add(computeNextValue());
+		}
+	}
+
+	@Override
+	public float[] next() {
+		final var result = cache.get(actualPosition);
+		moveCursorToNextPosition();
+		return result;
 	}
 
 	protected abstract float[] computeNextValue();

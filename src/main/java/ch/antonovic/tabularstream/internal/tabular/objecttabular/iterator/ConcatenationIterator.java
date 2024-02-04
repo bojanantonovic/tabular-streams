@@ -20,6 +20,11 @@ public class ConcatenationIterator<T> extends AbstractConcatenationIterator<T[],
 	}
 
 	@Override
+	public T cachedValueFromColumn(final int index) {
+		return getCurrentStream().cachedValueFromColumn(index);
+	}
+
+	@Override
 	public T[] current() {
 		return getCurrentStream().current();
 	}

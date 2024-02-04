@@ -12,6 +12,11 @@ public class FloatTabularStreamIteratorWrapper implements FloatTabularStreamIter
 	}
 
 	@Override
+	public float cachedValueFromColumn(final int index) {
+		return parentIterator.cachedValueFromColumn(index);
+	}
+
+	@Override
 	public float valueFromColumn(final int index) {
 		return parentIterator.valueFromColumn(index);
 	}
@@ -30,21 +35,6 @@ public class FloatTabularStreamIteratorWrapper implements FloatTabularStreamIter
 	public float[] next() {
 		return parentIterator.next();
 	}
-/*
-	@Override
-	public float[] extractRow(IntFunction<float[]> rowGenerator) {
-		return parent.extractRow(rowGenerator);
-	}
-
-	@Override
-	public <T> T mapRow(Function<float[], T> rowMapper) {
-		return parent.mapRow(rowMapper);
-	}
-
-	@Override
-	public float mapRow(ToFloatFunction<float[]> rowReducer) {
-		return parent.mapRow(rowReducer);
-	}*/
 
 	@Override
 	public void reset() {
@@ -54,6 +44,11 @@ public class FloatTabularStreamIteratorWrapper implements FloatTabularStreamIter
 	@Override
 	public long numberOfDeliveredElements() {
 		return parentIterator.numberOfDeliveredElements();
+	}
+
+	@Override
+	public void moveCursorToNextPosition() {
+		parentIterator.moveCursorToNextPosition();
 	}
 
 	@Override

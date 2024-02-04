@@ -20,6 +20,11 @@ public class ConcatenationIterator extends AbstractConcatenationIterator<double[
 	}
 
 	@Override
+	public double cachedValueFromColumn(final int index) {
+		return getCurrentStream().cachedValueFromColumn(index);
+	}
+
+	@Override
 	public double[] current() {
 		return getCurrentStream().current();
 	}
