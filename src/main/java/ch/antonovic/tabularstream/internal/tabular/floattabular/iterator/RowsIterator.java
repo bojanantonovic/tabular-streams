@@ -1,7 +1,5 @@
 package ch.antonovic.tabularstream.internal.tabular.floattabular.iterator;
 
-import ch.antonovic.tabularstream.function.FloatBinaryOperator;
-import ch.antonovic.tabularstream.function.FloatUnaryOperator;
 import ch.antonovic.tabularstream.function.LoaderWithOffset;
 import ch.antonovic.tabularstream.function.StoreWithOffset;
 import ch.antonovic.tabularstream.iterator.FloatTabularStreamIterator;
@@ -25,11 +23,6 @@ public class RowsIterator implements FloatTabularStreamIterator {
 	}
 
 	@Override
-	public float cachedValueFromColumn(final int index) {
-		return table[index][actualPosition];
-	}
-
-	@Override
 	public float valueFromColumn(final int index) {
 		return table[index][actualPosition];
 	}
@@ -45,11 +38,6 @@ public class RowsIterator implements FloatTabularStreamIterator {
 	}
 
 	@Override
-	public void incrementPositionWithoutReading() {
-		moveCursorToNextPosition();
-	}
-
-	@Override
 	public void reset() {
 		actualPosition = 0;
 	}
@@ -60,24 +48,10 @@ public class RowsIterator implements FloatTabularStreamIterator {
 	}
 
 	@Override
-	public float[] current() {
-		return extractRow(float[]::new);
-	}
-
-	@Override
 	public float[] next() {
-		final var current = current();
-		incrementPositionWithoutReading();
+		final var current = extractRow(float[]::new);
+		moveCursorToNextPosition();
 		return current;
-	}
-
-	@Override
-	public float mapUnary(final FloatUnaryOperator operator) {
-		if (numberOfColumns != 1) {
-			throw new IllegalArgumentException("Stream has a different cardinality than 1: " + numberOfColumns);
-		}
-		final var rowValue = cachedValueFromColumn(0);
-		return operator.applyAsFloat(rowValue);
 	}
 
 	// TODO
@@ -90,16 +64,6 @@ public class RowsIterator implements FloatTabularStreamIterator {
 		final var result = new float[stepWidth];
 		storeWithOffset.store(c1, result, actualPosition);
 		return result;
-	}
-
-	@Override
-	public float mapBinary(final FloatBinaryOperator operator) {
-		if (numberOfColumns != 2) {
-			throw new IllegalArgumentException("Stream has a different cardinality than 2: " + numberOfColumns);
-		}
-		final var y1 = cachedValueFromColumn(0);
-		final var y2 = cachedValueFromColumn(1);
-		return operator.applyAsFloat(y1, y2);
 	}
 
 	// TODO
@@ -119,7 +83,7 @@ public class RowsIterator implements FloatTabularStreamIterator {
 		final var row = rowGenerator.apply(numberOfColumns);
 
 		for (var i = 0; i < numberOfColumns; i++) {
-			row[i] = cachedValueFromColumn(i);
+			row[i] = valueFromColumn(i);
 		}
 		return row;
 	}

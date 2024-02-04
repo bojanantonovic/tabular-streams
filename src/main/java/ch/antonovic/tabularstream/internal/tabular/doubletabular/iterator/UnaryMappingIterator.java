@@ -7,8 +7,6 @@ import java.util.function.DoubleUnaryOperator;
 public class UnaryMappingIterator extends DoubleTabularStreamIteratorWrapper {
 	private final DoubleUnaryOperator unaryOperator;
 
-	private double cachedValue = Double.NaN;
-
 	public UnaryMappingIterator(final DoubleTabularStreamIterator parentIterator, final DoubleUnaryOperator unaryOperator) {
 		super(parentIterator);
 		this.unaryOperator = unaryOperator;
@@ -17,21 +15,12 @@ public class UnaryMappingIterator extends DoubleTabularStreamIteratorWrapper {
 	@Override
 	public double[] next() {
 		final var nextValue = new double[] {valueFromColumn(0)};
-		incrementPositionWithoutReading();
+		moveCursorToNextPosition();
 		return nextValue;
 	}
 
 	@Override
 	public double valueFromColumn(final int index) {
-		cachedValue = unaryOperator.applyAsDouble(parentIterator.valueFromColumn(0));
-		return cachedValue;
-	}
-
-	@Override
-	public double cachedValueFromColumn(final int index) {
-		if (index > 0) {
-			throw new IllegalArgumentException();
-		}
-		return cachedValue;
+		return unaryOperator.applyAsDouble(parentIterator.valueFromColumn(0));
 	}
 }

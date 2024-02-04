@@ -11,8 +11,6 @@ public class BinaryMappingIterator<T> extends ObjectTabularStreamIteratorWrapper
 
 	private final IntFunction<T[]> arrayCreator;
 
-	private T currentValue;
-
 	public BinaryMappingIterator(final ObjectTabularStreamIterator<T> parentIterator, final Class<T> type, final BinaryOperator<T> binaryOperator) {
 		super(parentIterator);
 		this.binaryOperator = binaryOperator;
@@ -21,25 +19,16 @@ public class BinaryMappingIterator<T> extends ObjectTabularStreamIteratorWrapper
 
 	@Override
 	public T valueFromColumn(final int index) {
-		currentValue = binaryOperator.apply( //
+		return binaryOperator.apply( //
 				parentIterator.valueFromColumn(0), //
 				parentIterator.valueFromColumn(1));
-		return currentValue;
 	}
 
 	@Override
 	public T[] next() {
 		final var nextValue = arrayCreator.apply(1);
 		nextValue[0] = valueFromColumn(0);
-		incrementPositionWithoutReading();
+		moveCursorToNextPosition();
 		return nextValue;
-	}
-
-	@Override
-	public T cachedValueFromColumn(final int index) {
-		if (index > 0) {
-			throw new IllegalArgumentException();
-		}
-		return currentValue;
 	}
 }

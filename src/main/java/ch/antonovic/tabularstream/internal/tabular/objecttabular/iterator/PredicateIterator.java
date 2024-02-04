@@ -22,7 +22,7 @@ public class PredicateIterator<T> extends ObjectTabularStreamIteratorWrapper<T> 
 	public void moveCursorToNextPosition() {
 		composablePredicateIterator.moveCursorToNextPosition();
 	}
-	
+
 	@Override
 	public boolean hasNext() {
 		return composablePredicateIterator.hasNext();
@@ -31,10 +31,5 @@ public class PredicateIterator<T> extends ObjectTabularStreamIteratorWrapper<T> 
 	@Override
 	public T[] next() {
 		return composablePredicateIterator.next();
-	}
-
-	@Override
-	public void incrementPositionWithoutReading() {
-		composablePredicateIterator.incrementPositionWithoutReading();
 	}
 }

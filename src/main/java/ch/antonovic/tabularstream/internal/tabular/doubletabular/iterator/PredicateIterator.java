@@ -32,9 +32,4 @@ public class PredicateIterator extends DoubleTabularStreamIteratorWrapper {
 	public long numberOfDeliveredElements() {
 		return composablePredicateIterator.numberOfDeliveredElements();
 	}
-
-	@Override
-	public void incrementPositionWithoutReading() {
-		composablePredicateIterator.incrementPositionWithoutReading();
-	}
 }

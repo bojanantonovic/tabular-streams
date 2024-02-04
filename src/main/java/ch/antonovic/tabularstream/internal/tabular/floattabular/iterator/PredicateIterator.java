@@ -32,9 +32,4 @@ public class PredicateIterator extends FloatTabularStreamIteratorWrapper {
 	public float[] next() {
 		return composablePredicateIterator.next();
 	}
-
-	@Override
-	public void incrementPositionWithoutReading() {
-		composablePredicateIterator.incrementPositionWithoutReading();
-	}
 }

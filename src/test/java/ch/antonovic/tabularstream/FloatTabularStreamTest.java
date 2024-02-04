@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -143,7 +142,7 @@ class FloatTabularStreamTest {
 		final float[] expected2 = new float[] {2, 6};
 		assertArrayEquals(expected2, secondRow);
 	}
-
+/*
 	@Test
 	void current_infiniteRandomStream() {
 		final var random = new Random();
@@ -159,7 +158,7 @@ class FloatTabularStreamTest {
 		assertEquals(1, iterator.numberOfDeliveredElements());
 		assertArrayEquals(next, current1);
 		assertArrayEquals(current1, current2);
-	}
+	}*/
 
 	@Test
 	void filter() {

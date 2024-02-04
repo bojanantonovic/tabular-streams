@@ -66,9 +66,4 @@ public abstract class AbstractConcatenationIterator<R, I extends TabularStreamIt
 
 		return false;
 	}
-
-	@Override
-	public void incrementPositionWithoutReading() {
-		moveCursorToNextPosition();
-	}
 }

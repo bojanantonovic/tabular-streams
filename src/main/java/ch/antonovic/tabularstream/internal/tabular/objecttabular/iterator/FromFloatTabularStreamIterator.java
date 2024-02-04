@@ -3,19 +3,14 @@ package ch.antonovic.tabularstream.internal.tabular.objecttabular.iterator;
 import ch.antonovic.tabularstream.function.FloatFunction;
 import ch.antonovic.tabularstream.iterator.FloatTabularStreamIterator;
 import ch.antonovic.tabularstream.iterator.ObjectTabularStreamIterator;
-import org.springframework.lang.Nullable;
 
 import java.lang.reflect.Array;
-import java.util.function.BinaryOperator;
-import java.util.function.UnaryOperator;
 
 public class FromFloatTabularStreamIterator<T> implements ObjectTabularStreamIterator<T> {
 	private final FloatTabularStreamIterator sourceIterator;
 	private final FloatFunction<T> floatFunction;
 
 	private final Class<T> type;
-
-	private @Nullable T[] currentValue;
 
 	public FromFloatTabularStreamIterator(final FloatTabularStreamIterator sourceIterator, final FloatFunction<T> floatFunction, final Class<T> type) {
 		this.sourceIterator = sourceIterator;
@@ -29,40 +24,13 @@ public class FromFloatTabularStreamIterator<T> implements ObjectTabularStreamIte
 	}
 
 	@Override
-	public void incrementPositionWithoutReading() {
-		sourceIterator.incrementPositionWithoutReading();
-	}
-
-	@Override
 	public long numberOfDeliveredElements() {
 		return sourceIterator.numberOfDeliveredElements();
 	}
 
 	@Override
-	public T cachedValueFromColumn(final int index) {
-		assert currentValue != null;
-		return currentValue[index];
-	}
-
-	@Override
-	public T mapUnary(final UnaryOperator<T> operator) {
-		throw new UnsupportedOperationException(); // TODO
-	}
-
-	@Override
-	public T mapBinary(final BinaryOperator<T> operator) {
-		throw new UnsupportedOperationException(); // TODO
-	}
-
-	@Override
 	public void reset() {
 		sourceIterator.reset();
-	}
-
-	@Override
-	public T[] current() {
-		assert currentValue != null;
-		return currentValue;
 	}
 
 	@Override
@@ -78,10 +46,10 @@ public class FromFloatTabularStreamIterator<T> implements ObjectTabularStreamIte
 	@Override
 	public T[] next() {
 		final var next = sourceIterator.next();
-		currentValue = (T[]) Array.newInstance(type, next.length);
+		final var result = (T[]) Array.newInstance(type, next.length);
 		for (var i = 0; i < next.length; i++) {
-			currentValue[i] = floatFunction.apply(next[i]);
+			result[i] = floatFunction.apply(next[i]);
 		}
-		return currentValue;
+		return result;
 	}
 }

@@ -5,8 +5,6 @@ import ch.antonovic.tabularstream.iterator.DoubleTabularStreamIterator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.DoubleBinaryOperator;
-import java.util.function.DoubleUnaryOperator;
 
 public abstract class DoubleTabularStreamIteratorByRecursion implements DoubleTabularStreamIterator {
 	protected final List<double[]> cache = new ArrayList<>();
@@ -27,35 +25,7 @@ public abstract class DoubleTabularStreamIteratorByRecursion implements DoubleTa
 		if (numberOfDeliveredElements() == 0) {
 			throw new IllegalStateException("next() has not been called");
 		}
-		return current()[index];
-	}
-
-	@Override
-	public double cachedValueFromColumn(final int index) {
-		if (numberOfDeliveredElements() == 0) {
-			throw new IllegalStateException("next() has not been called");
-		}
-		return current()[index];
-	}
-
-	@Override
-	public double mapUnary(final DoubleUnaryOperator operator) {
-		throw new UnsupportedOperationException(); // TODO cardinality check if a Map is a source?
-	}
-
-	@Override
-	public double mapBinary(final DoubleBinaryOperator operator) {
-		throw new UnsupportedOperationException(); // TODO cardinality check if a Map is a source?
-	}
-
-	@Override
-	public double[] current() {
-		return cache.getLast();
-	}
-
-	@Override
-	public void incrementPositionWithoutReading() {
-		throw new UnsupportedOperationException();
+		return cache.get(actualPosition)[index];
 	}
 
 	@Override

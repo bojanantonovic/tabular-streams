@@ -1,7 +1,5 @@
 package ch.antonovic.tabularstream.internal.tabular.floattabular.iterator;
 
-import ch.antonovic.tabularstream.function.FloatBinaryOperator;
-import ch.antonovic.tabularstream.function.FloatUnaryOperator;
 import ch.antonovic.tabularstream.iterator.FloatTabularStreamIterator;
 
 import java.util.function.Supplier;
@@ -18,11 +16,6 @@ public class InfinityIterator implements FloatTabularStreamIterator {
 	}
 
 	@Override
-	public void incrementPositionWithoutReading() {
-		actualPosition++;
-	}
-
-	@Override
 	public long numberOfDeliveredElements() {
 		return actualPosition;
 	}
@@ -33,21 +26,8 @@ public class InfinityIterator implements FloatTabularStreamIterator {
 	}
 
 	@Override
-	public float cachedValueFromColumn(final int index) {
-		return currentValue[index];
-	}
-
-	@Override
 	public float valueFromColumn(int index) {
 		return currentValue[index];
-	}
-
-	@Override
-	public float[] current() {
-		if (actualPosition == 0) {
-			throw new IllegalStateException("next() has not been called");
-		}
-		return currentValue;
 	}
 
 	@Override
@@ -60,16 +40,6 @@ public class InfinityIterator implements FloatTabularStreamIterator {
 	public float[] next() {
 		moveCursorToNextPosition();
 		return currentValue;
-	}
-
-	@Override
-	public float mapUnary(final FloatUnaryOperator operator) {
-		throw new UnsupportedOperationException(); // TODO cardinality check if a Map is a source?
-	}
-
-	@Override
-	public float mapBinary(final FloatBinaryOperator operator) {
-		throw new UnsupportedOperationException(); // TODO cardinality check if a Map is a source?
 	}
 
 	@Override

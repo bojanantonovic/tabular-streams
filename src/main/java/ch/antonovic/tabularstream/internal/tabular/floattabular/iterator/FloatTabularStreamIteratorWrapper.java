@@ -1,7 +1,5 @@
 package ch.antonovic.tabularstream.internal.tabular.floattabular.iterator;
 
-import ch.antonovic.tabularstream.function.FloatBinaryOperator;
-import ch.antonovic.tabularstream.function.FloatUnaryOperator;
 import ch.antonovic.tabularstream.iterator.FloatTabularStreamIterator;
 
 public class FloatTabularStreamIteratorWrapper implements FloatTabularStreamIterator {
@@ -12,11 +10,6 @@ public class FloatTabularStreamIteratorWrapper implements FloatTabularStreamIter
 	}
 
 	@Override
-	public float cachedValueFromColumn(final int index) {
-		return parentIterator.cachedValueFromColumn(index);
-	}
-
-	@Override
 	public float valueFromColumn(final int index) {
 		return parentIterator.valueFromColumn(index);
 	}
@@ -24,11 +17,6 @@ public class FloatTabularStreamIteratorWrapper implements FloatTabularStreamIter
 	@Override
 	public boolean hasNext() {
 		return parentIterator.hasNext();
-	}
-
-	@Override
-	public float[] current() {
-		return parentIterator.current();
 	}
 
 	@Override
@@ -49,20 +37,5 @@ public class FloatTabularStreamIteratorWrapper implements FloatTabularStreamIter
 	@Override
 	public void moveCursorToNextPosition() {
 		parentIterator.moveCursorToNextPosition();
-	}
-
-	@Override
-	public void incrementPositionWithoutReading() {
-		parentIterator.incrementPositionWithoutReading();
-	}
-
-	@Override
-	public float mapUnary(final FloatUnaryOperator operator) {
-		return parentIterator.mapUnary(operator);
-	}
-
-	@Override
-	public float mapBinary(final FloatBinaryOperator operator) {
-		return parentIterator.mapBinary(operator);
 	}
 }

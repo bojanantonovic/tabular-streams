@@ -5,8 +5,6 @@ import ch.antonovic.tabularstream.iterator.ObjectTabularStreamIterator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.BinaryOperator;
-import java.util.function.UnaryOperator;
 
 public abstract class ObjectTabularStreamIteratorByRecursion<T> implements ObjectTabularStreamIterator<T> {
 	protected final List<T[]> cache = new ArrayList<>();
@@ -30,35 +28,7 @@ public abstract class ObjectTabularStreamIteratorByRecursion<T> implements Objec
 		if (numberOfDeliveredElements() == 0) {
 			throw new IllegalStateException("next() has not been called");
 		}
-		return current()[index];
-	}
-
-	@Override
-	public T cachedValueFromColumn(final int index) {
-		if (numberOfDeliveredElements() == 0) {
-			throw new IllegalStateException("next() has not been called");
-		}
-		return current()[index];
-	}
-
-	@Override
-	public T mapUnary(final UnaryOperator<T> operator) {
-		throw new UnsupportedOperationException(); // TODO cardinality check if a Map is a source?
-	}
-
-	@Override
-	public T mapBinary(final BinaryOperator<T> operator) {
-		throw new UnsupportedOperationException(); // TODO cardinality check if a Map is a source?
-	}
-
-	@Override
-	public T[] current() {
-		return cache.getLast();
-	}
-
-	@Override
-	public void incrementPositionWithoutReading() {
-		throw new UnsupportedOperationException();
+		return cache.get(actualPosition)[index];
 	}
 
 	@Override

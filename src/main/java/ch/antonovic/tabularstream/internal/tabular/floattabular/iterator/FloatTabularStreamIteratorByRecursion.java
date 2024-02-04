@@ -1,7 +1,5 @@
 package ch.antonovic.tabularstream.internal.tabular.floattabular.iterator;
 
-import ch.antonovic.tabularstream.function.FloatBinaryOperator;
-import ch.antonovic.tabularstream.function.FloatUnaryOperator;
 import ch.antonovic.tabularstream.iterator.FloatTabularStreamIterator;
 
 import java.util.ArrayList;
@@ -23,39 +21,11 @@ public abstract class FloatTabularStreamIteratorByRecursion implements FloatTabu
 	}
 
 	@Override
-	public float cachedValueFromColumn(final int index) {
-		if (numberOfDeliveredElements() == 0) {
-			throw new IllegalStateException("next() has not been called");
-		}
-		return current()[index];
-	}
-
-	@Override
 	public float valueFromColumn(final int index) {
 		if (numberOfDeliveredElements() == 0) {
 			throw new IllegalStateException("next() has not been called");
 		}
-		return current()[index];
-	}
-
-	@Override
-	public float mapUnary(final FloatUnaryOperator operator) {
-		throw new UnsupportedOperationException(); // TODO cardinality check if a Map is a source?
-	}
-
-	@Override
-	public float mapBinary(final FloatBinaryOperator operator) {
-		throw new UnsupportedOperationException(); // TODO cardinality check if a Map is a source?
-	}
-
-	@Override
-	public float[] current() {
-		return cache.getLast();
-	}
-
-	@Override
-	public void incrementPositionWithoutReading() {
-		throw new UnsupportedOperationException();
+		return cache.get(actualPosition)[index];
 	}
 
 	@Override

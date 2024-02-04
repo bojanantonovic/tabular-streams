@@ -3,9 +3,7 @@ package ch.antonovic.tabularstream.internal.tabular.objecttabular.iterator;
 import ch.antonovic.tabularstream.iterator.ObjectTabularStreamIterator;
 
 import java.lang.reflect.Array;
-import java.util.function.BinaryOperator;
 import java.util.function.IntFunction;
-import java.util.function.UnaryOperator;
 
 public class RowsIterator<T> implements ObjectTabularStreamIterator<T> {
 
@@ -30,11 +28,6 @@ public class RowsIterator<T> implements ObjectTabularStreamIterator<T> {
 	}
 
 	@Override
-	public T cachedValueFromColumn(final int index) {
-		return table[index][actualPosition];
-	}
-
-	@Override
 	public boolean hasNext() {
 		return actualPosition < numberOfRows;
 	}
@@ -42,11 +35,6 @@ public class RowsIterator<T> implements ObjectTabularStreamIterator<T> {
 	@Override
 	public void moveCursorToNextPosition() {
 		actualPosition++;
-	}
-
-	@Override
-	public void incrementPositionWithoutReading() {
-		moveCursorToNextPosition();
 	}
 
 	@Override
@@ -60,41 +48,17 @@ public class RowsIterator<T> implements ObjectTabularStreamIterator<T> {
 	}
 
 	@Override
-	public T[] current() {
-		return extractRow(arrayCreator);
-	}
-
-	@Override
 	public T[] next() {
-		final var current = current();
-		incrementPositionWithoutReading();
+		final var current = extractRow(arrayCreator);
+		moveCursorToNextPosition();
 		return current;
-	}
-
-	@Override
-	public T mapUnary(final UnaryOperator<T> operator) {
-		if (numberOfColumns != 1) {
-			throw new IllegalArgumentException("Stream has a different cardinality than 1: " + numberOfColumns);
-		}
-		final var rowValue = cachedValueFromColumn(0);
-		return operator.apply(rowValue);
-	}
-
-	@Override
-	public T mapBinary(final BinaryOperator<T> operator) {
-		if (numberOfColumns != 2) {
-			throw new IllegalArgumentException("Stream has a different cardinality than 2: " + numberOfColumns);
-		}
-		final var y1 = cachedValueFromColumn(0);
-		final var y2 = cachedValueFromColumn(1);
-		return operator.apply(y1, y2);
 	}
 
 	public T[] extractRow(final IntFunction<T[]> rowGenerator) {
 		final var row = rowGenerator.apply(numberOfColumns);
 
 		for (var i = 0; i < numberOfColumns; i++) {
-			row[i] = cachedValueFromColumn(i);
+			row[i] = valueFromColumn(i);
 		}
 		return row;
 	}

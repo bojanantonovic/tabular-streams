@@ -13,10 +13,6 @@ public class LengthLimitIterator<T> extends ObjectTabularStreamIteratorWrapper<T
 
 	@Override
 	public boolean hasNext() {
-	/*	if (numberOfDeliveredElements() >= limit) {
-			return false;
-		}*/
-
 		return parentIterator.hasNext() && (numberOfDeliveredElements() < limit);
 	}
 }

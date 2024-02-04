@@ -5,7 +5,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.lang.Nullable;
 
-import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
 public class ComposablePredicateIterator<R, I extends TabularStreamIterator<R>> implements TabularStreamIterator<R> {
@@ -16,7 +15,6 @@ public class ComposablePredicateIterator<R, I extends TabularStreamIterator<R>> 
 
 	private @Nullable R currentValue = null;
 
-	private boolean hasNextWasCalled = false;
 	private boolean nextValidElementExists = false;
 
 	private long numberOfDeliveredElements = 0;
@@ -51,7 +49,6 @@ public class ComposablePredicateIterator<R, I extends TabularStreamIterator<R>> 
 
 	@Override
 	public boolean hasNext() {
-		hasNextWasCalled = true;
 		return nextValidElementExists;
 	}
 
@@ -60,19 +57,6 @@ public class ComposablePredicateIterator<R, I extends TabularStreamIterator<R>> 
 		final var result = currentValue;
 		moveCursorToNextPosition();
 		return result;
-	}
-
-	@Override
-	public R current() {
-		return next();
-	}
-
-	@Override
-	public void incrementPositionWithoutReading() {
-		final var success = hasNextWasCalled || hasNext();
-		if (!success) {
-			throw new NoSuchElementException();
-		}
 	}
 
 	@Override
