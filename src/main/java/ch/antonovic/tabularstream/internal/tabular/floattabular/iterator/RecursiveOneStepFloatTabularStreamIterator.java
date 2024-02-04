@@ -14,7 +14,7 @@ public class RecursiveOneStepFloatTabularStreamIterator extends FloatTabularStre
 	@Override
 	protected float[] computeNextValue() {
 		final var next = new float[numberOfColumns];
-		final var a = cache.get(cache.size() - 1);
+		final var a = cache.getLast();
 		for (var i = 0; i < numberOfColumns; i++) {
 			next[i] = unaryOperator.applyAsFloat(a[i]);
 		}

@@ -118,7 +118,7 @@ public abstract class ObjectTabularStream<T> extends TabularStream<T[], ObjectTa
 			final var value = iterator.next();
 			LOGGER.debug("value to map: {}", () -> Arrays.toString(value));
 			for (var i = 0; i < numberOfColumns; i++) {
-				result[i][counter] = value[i];//iterator.valueFromColumn(i);
+				result[i][counter] = value[i];
 			}
 		}
 
