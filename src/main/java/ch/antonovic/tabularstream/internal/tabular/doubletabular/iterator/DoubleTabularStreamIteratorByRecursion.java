@@ -35,8 +35,8 @@ public abstract class DoubleTabularStreamIteratorByRecursion implements DoubleTa
 
 	@Override
 	public void reset() {
-		//cache.clear();
-		//inizializeCache();
+		cache.clear();
+		inizializeCache();
 		actualPosition = 0;
 	}
 

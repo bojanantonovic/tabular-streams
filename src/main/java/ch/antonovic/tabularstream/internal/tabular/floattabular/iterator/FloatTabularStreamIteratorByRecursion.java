@@ -35,8 +35,8 @@ public abstract class FloatTabularStreamIteratorByRecursion implements FloatTabu
 
 	@Override
 	public void reset() {
-		//cache.clear();
-		//inizializeCache();
+		cache.clear();
+		inizializeCache();
 		actualPosition = 0;
 	}
 
