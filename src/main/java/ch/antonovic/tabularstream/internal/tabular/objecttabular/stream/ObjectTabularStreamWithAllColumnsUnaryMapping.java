@@ -16,6 +16,6 @@ public class ObjectTabularStreamWithAllColumnsUnaryMapping<T> extends ObjectTabu
 
 	@Override
 	public ObjectTabularStreamIterator<T> iterator() {
-		return new UnaryMappingColumnsIterator(parent.iterator(), operators);
+		return new UnaryMappingColumnsIterator<>(parent.iterator(), operators);
 	}
 }

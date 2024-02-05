@@ -85,7 +85,7 @@ public abstract class ObjectTabularStream<T> extends TabularStream<T[], ObjectTa
 	}
 
 	public ObjectTabularStream<T> mapAllValuesUnary(final UnaryOperator<T> operator) {
-		return new ObjectTabularStreamWithAllValuesUnaryMapping(this, operator);
+		return new ObjectTabularStreamWithAllValuesUnaryMapping<>(this, operator);
 	}
 
 	public ObjectTabularStream<T> mapColumnsUnary(final UnaryOperator<T>... operators) {
