@@ -38,6 +38,6 @@ public class DoubleUnaryTabularStreamWithColumn extends DoubleUnaryTabularStream
 
 	@Override
 	public DoubleTabularStreamIterator iterator() {
-		return new RowsIterator(new double[][] {column}, numberOfColumns, column.length);
+		return new RowsIterator(new double[][] {column}, column.length);
 	}
 }

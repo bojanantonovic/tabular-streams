@@ -16,9 +16,9 @@ public class RowsIterator implements FloatTabularStreamIterator {
 	private final int numberOfRows;
 	private int actualPosition = 0;
 
-	public RowsIterator(final float[][] table, final int numberOfColumns, final int numberOfRows) {
+	public RowsIterator(final float[][] table, final int numberOfRows) {
 		this.table = table;
-		this.numberOfColumns = numberOfColumns;
+		this.numberOfColumns = table.length;
 		this.numberOfRows = numberOfRows;
 	}
 

@@ -53,6 +53,6 @@ public class DoubleTabularStreamWithColumns extends DoubleTabularStream {
 
 	@Override
 	public DoubleTabularStreamIterator iterator() {
-		return new RowsIterator(table, numberOfColumns, numberOfRows);
+		return new RowsIterator(table, numberOfRows);
 	}
 }

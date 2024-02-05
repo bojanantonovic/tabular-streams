@@ -38,6 +38,6 @@ public class FloatUnaryTabularStreamWithColumn extends FloatUnaryTabularStream {
 
 	@Override
 	public FloatTabularStreamIterator iterator() {
-		return new RowsIterator(new float[][] {column}, numberOfColumns, column.length);
+		return new RowsIterator(new float[][] {column}, column.length);
 	}
 }

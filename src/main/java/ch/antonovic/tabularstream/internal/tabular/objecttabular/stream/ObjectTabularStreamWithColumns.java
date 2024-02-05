@@ -54,6 +54,6 @@ public class ObjectTabularStreamWithColumns<T> extends ObjectTabularStream<T> {
 
 	@Override
 	public ObjectTabularStreamIterator<T> iterator() {
-		return new RowsIterator<>(table, type, numberOfColumns, numberOfRows);
+		return new RowsIterator<>(table, type, numberOfRows);
 	}
 }

@@ -44,6 +44,6 @@ public class ObjectUnaryTabularStreamWithColumn<T> extends ObjectUnaryTabularStr
 
 	@Override
 	public ObjectTabularStreamIterator<T> iterator() {
-		return new RowsIterator<>(table, type, numberOfColumns, column.length);
+		return new RowsIterator<>(table, type, column.length);
 	}
 }
