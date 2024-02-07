@@ -1,5 +1,5 @@
 @NonNullApi @NonNullFields
-package ch.antonovic.tabularstream;
+package test.ch.antonovic.tabularstream;
 
 import org.springframework.lang.NonNullApi;
 import org.springframework.lang.NonNullFields;

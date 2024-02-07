@@ -2,6 +2,12 @@ package ch.antonovic.tabularstream.internal.tabular.floattabular.stream;
 
 import ch.antonovic.tabularstream.FloatTabularStream;
 import ch.antonovic.tabularstream.FloatUnaryTabularStream;
+import ch.antonovic.tabularstream.function.FloatBinaryOperator;
+import ch.antonovic.tabularstream.function.FloatUnaryOperator;
+import jdk.incubator.vector.FloatVector;
+
+import java.util.function.BinaryOperator;
+import java.util.function.UnaryOperator;
 
 public abstract class FloatTabularStreamWithSingleRowReducing extends FloatUnaryTabularStream {
 
@@ -29,5 +35,15 @@ public abstract class FloatTabularStreamWithSingleRowReducing extends FloatUnary
 	@Override
 	public long estimatedGrossLength() {
 		return sourceStream.estimatedGrossLength();
+	}
+
+	@Override
+	public float[] fusedMapUnaryAndThenToArray(final UnaryOperator<FloatVector> unaryOperator, final FloatUnaryOperator floatUnaryOperator) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public float[] fusedMapBinaryAndThenToArray(final BinaryOperator<FloatVector> binaryOperator, final FloatBinaryOperator floatBinaryOperator) {
+		throw new UnsupportedOperationException();
 	}
 }

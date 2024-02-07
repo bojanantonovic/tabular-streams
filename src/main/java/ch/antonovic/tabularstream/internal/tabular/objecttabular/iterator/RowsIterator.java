@@ -31,8 +31,18 @@ public class RowsIterator<T> extends AbstractObjectTabularStreamIterator<T> {
 	}
 
 	@Override
+	public boolean hasNext(final long stepWidth) {
+		return actualPosition + stepWidth < numberOfRows;
+	}
+
+	@Override
 	public void moveCursorToNextPosition() {
 		actualPosition++;
+	}
+
+	@Override
+	public void moveCursorToNextPosition(final long stepWidth) {
+		actualPosition += (int) stepWidth;
 	}
 
 	@Override

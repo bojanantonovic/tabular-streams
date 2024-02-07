@@ -1,5 +1,6 @@
-package ch.antonovic.tabularstream;
+package test.ch.antonovic.tabularstream;
 
+import ch.antonovic.tabularstream.DoubleUnaryTabularStream;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,5 +23,21 @@ class DoubleUnaryTabularStreamTest {
 		final var aggregationResult = mappedStream.aggregateRows(Double::max);
 		assertTrue(aggregationResult.isPresent());
 		assertArrayEquals(new double[] {12}, aggregationResult.get());
+	}
+
+	@Test
+	void fusedMapUnaryAndThenToArray() {
+		final var sourceStream = DoubleUnaryTabularStream.of(DoubleTabularStreamTest.a);
+		final var result = sourceStream.fusedMapUnaryAndThenToArray(f -> f.mul(3), x -> x * 3);
+		assertArrayEquals(new double[] {3, 6, 9, 12}, result);
+	}
+
+	@Test
+	void fusedMapUnaryAndThenToArray_concat() {
+		final var sourceStream = DoubleUnaryTabularStream.concat( //
+				DoubleUnaryTabularStream.of(DoubleTabularStreamTest.a), //
+				DoubleUnaryTabularStream.of(DoubleTabularStreamTest.b));
+		final var result = sourceStream.fusedMapUnaryAndThenToArray(f -> f.mul(3), x -> x * 3);
+		assertArrayEquals(new double[] {3, 6, 9, 12, 15, 18, 21, 24}, result);
 	}
 }

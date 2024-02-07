@@ -1,6 +1,8 @@
 package ch.antonovic.tabularstream.internal.tabular.doubletabular.iterator;
 
 import ch.antonovic.tabularstream.iterator.DoubleTabularStreamIterator;
+import jdk.incubator.vector.DoubleVector;
+import jdk.incubator.vector.VectorSpecies;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +31,11 @@ public abstract class DoubleTabularStreamIteratorByRecursion implements DoubleTa
 	}
 
 	@Override
+	public DoubleVector valueFromColumn(final int column, final VectorSpecies<Double> species) {
+		throw new UnsupportedOperationException("No efficient native support possible.");
+	}
+
+	@Override
 	public long numberOfDeliveredElements() {
 		return actualPosition;
 	}
@@ -50,10 +57,22 @@ public abstract class DoubleTabularStreamIteratorByRecursion implements DoubleTa
 	}
 
 	@Override
+	public boolean hasNext(final long stepWidth) {
+		return true;
+	}
+
+	@Override
 	public void moveCursorToNextPosition() {
 		actualPosition++;
 		if (actualPosition >= cache.size()) {
 			cache.add(computeNextValue());
+		}
+	}
+
+	@Override
+	public void moveCursorToNextPosition(final long stepWidth) {
+		for (var i = 0; i < stepWidth; i++) {
+			moveCursorToNextPosition();
 		}
 	}
 

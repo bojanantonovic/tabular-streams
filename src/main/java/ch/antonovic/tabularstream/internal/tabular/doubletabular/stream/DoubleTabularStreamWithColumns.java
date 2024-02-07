@@ -3,10 +3,15 @@ package ch.antonovic.tabularstream.internal.tabular.doubletabular.stream;
 import ch.antonovic.tabularstream.DoubleTabularStream;
 import ch.antonovic.tabularstream.internal.tabular.doubletabular.iterator.RowsIterator;
 import ch.antonovic.tabularstream.iterator.DoubleTabularStreamIterator;
+import jdk.incubator.vector.DoubleVector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
+import java.util.function.BinaryOperator;
+import java.util.function.DoubleBinaryOperator;
+import java.util.function.DoubleUnaryOperator;
+import java.util.function.UnaryOperator;
 
 public class DoubleTabularStreamWithColumns extends DoubleTabularStream {
 
@@ -59,5 +64,17 @@ public class DoubleTabularStreamWithColumns extends DoubleTabularStream {
 	@Override
 	public DoubleTabularStreamIterator iterator() {
 		return new RowsIterator(table, numberOfRows);
+	}
+
+	@Override
+	public double[] fusedMapUnaryAndThenToArray(final UnaryOperator<DoubleVector> unaryOperator, final DoubleUnaryOperator doubleUnaryOperator) {
+		checkRequiredArity(this, 1);
+		return SimdHelper.fusedMapUnaryAndThenToArray(this, unaryOperator, doubleUnaryOperator);
+	}
+
+	@Override
+	public double[] fusedMapBinaryAndThenToArray(final BinaryOperator<DoubleVector> binaryOperator, final DoubleBinaryOperator doubleBinaryOperator) {
+		checkRequiredArity(this, 2);
+		return SimdHelper.fusedMapBinaryAndThenToArray(this, binaryOperator, doubleBinaryOperator);
 	}
 }

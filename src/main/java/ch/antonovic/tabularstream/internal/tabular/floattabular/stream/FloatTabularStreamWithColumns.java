@@ -1,12 +1,16 @@
 package ch.antonovic.tabularstream.internal.tabular.floattabular.stream;
 
 import ch.antonovic.tabularstream.FloatTabularStream;
+import ch.antonovic.tabularstream.function.FloatBinaryOperator;
+import ch.antonovic.tabularstream.function.FloatUnaryOperator;
 import ch.antonovic.tabularstream.internal.tabular.floattabular.iterator.RowsIterator;
-import ch.antonovic.tabularstream.iterator.FloatTabularStreamIterator;
+import jdk.incubator.vector.FloatVector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
+import java.util.function.BinaryOperator;
+import java.util.function.UnaryOperator;
 
 public class FloatTabularStreamWithColumns extends FloatTabularStream {
 
@@ -57,7 +61,19 @@ public class FloatTabularStreamWithColumns extends FloatTabularStream {
 	}
 
 	@Override
-	public FloatTabularStreamIterator iterator() {
+	public RowsIterator iterator() {
 		return new RowsIterator(table, numberOfRows);
+	}
+
+	@Override
+	public float[] fusedMapUnaryAndThenToArray(final UnaryOperator<FloatVector> unaryOperator, final FloatUnaryOperator floatUnaryOperator) {
+		checkRequiredArity(this, 1);
+		return SimdHelper.fusedMapUnaryAndThenToArray(this, unaryOperator, floatUnaryOperator);
+	}
+
+	@Override
+	public float[] fusedMapBinaryAndThenToArray(final BinaryOperator<FloatVector> binaryOperator, final FloatBinaryOperator floatBinaryOperator) {
+		checkRequiredArity(this, 2);
+		return SimdHelper.fusedMapBinaryAndThenToArray(this, binaryOperator, floatBinaryOperator);
 	}
 }

@@ -1,5 +1,7 @@
-package ch.antonovic.tabularstream;
+package test.ch.antonovic.tabularstream;
 
+import ch.antonovic.tabularstream.DoubleBinaryTabularStream;
+import jdk.incubator.vector.DoubleVector;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,5 +24,21 @@ class DoubleBinaryTabularStreamTest {
 		final var aggregationResult = mappedStream.aggregateRows(Double::max);
 		assertTrue(aggregationResult.isPresent());
 		assertArrayEquals(new double[] {12}, aggregationResult.get());
+	}
+
+	@Test
+	void fusedMapBinaryAndThenToArray() {
+		final var sourceStream = DoubleBinaryTabularStream.of(DoubleTabularStreamTest.a, DoubleTabularStreamTest.b);
+		final var result = sourceStream.fusedMapBinaryAndThenToArray(DoubleVector::add, Double::sum);
+		assertArrayEquals(new double[] {6, 8, 10, 12}, result);
+	}
+
+	@Test
+	void fusedMapBinaryAndThenToArray_concat() {
+		final var sourceStream = DoubleBinaryTabularStream.concat( //
+				DoubleBinaryTabularStream.of(DoubleTabularStreamTest.a, DoubleTabularStreamTest.b), //
+				DoubleBinaryTabularStream.of(DoubleTabularStreamTest.c, DoubleTabularStreamTest.d));
+		final var result = sourceStream.fusedMapBinaryAndThenToArray(DoubleVector::add, Double::sum);
+		assertArrayEquals(new double[] {6, 8, 10, 12, 23, 25, 27}, result);
 	}
 }

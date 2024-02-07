@@ -3,13 +3,22 @@ package ch.antonovic.tabularstream.internal.tabular.floattabular.stream;
 import ch.antonovic.tabularstream.FloatTabularStream;
 import ch.antonovic.tabularstream.TabularStream;
 import ch.antonovic.tabularstream.function.FloatBinaryOperator;
+import ch.antonovic.tabularstream.function.FloatUnaryOperator;
 import ch.antonovic.tabularstream.internal.tabular.floattabular.iterator.ConcatenationIterator;
 import ch.antonovic.tabularstream.iterator.FloatTabularStreamIterator;
+import jdk.incubator.vector.FloatVector;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.nio.FloatBuffer;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.function.BinaryOperator;
+import java.util.function.UnaryOperator;
 
 public class FloatTabularStreamWithConcatenation extends FloatTabularStream {
+
+	private static final Logger LOGGER = LogManager.getLogger(FloatUnaryTabularStreamWithColumn.class);
 
 	private final FloatTabularStream[] streams;
 
@@ -75,5 +84,43 @@ public class FloatTabularStreamWithConcatenation extends FloatTabularStream {
 		}
 
 		return Optional.of(result);
+	}
+
+	@Override
+	public float[] fusedMapUnaryAndThenToArray(final UnaryOperator<FloatVector> unaryOperator, final FloatUnaryOperator floatUnaryOperator) {
+		final var countedLength = count();
+		LOGGER.debug("counted length: {}", countedLength);
+		LOGGER.debug("number of columns: {}", numberOfColumns);
+		if (countedLength > Integer.MAX_VALUE) {
+			throw new IllegalArgumentException("Required array countedLength exceeds array limit in Java!");
+		}
+		final var result = new float[(int) countedLength];
+		var counter = 0;
+		final var floatBuffer = FloatBuffer.wrap(result);
+		for (final var stream : streams) {
+			final var array = stream.fusedMapUnaryAndThenToArray(unaryOperator, floatUnaryOperator);
+			floatBuffer.put(counter, array);
+			counter += array.length;
+		}
+		return result;
+	}
+
+	@Override
+	public float[] fusedMapBinaryAndThenToArray(final BinaryOperator<FloatVector> binaryOperator, final FloatBinaryOperator floatBinaryOperator) {
+		final var countedLength = count();
+		LOGGER.debug("counted length: {}", countedLength);
+		LOGGER.debug("number of columns: {}", numberOfColumns);
+		if (countedLength > Integer.MAX_VALUE) {
+			throw new IllegalArgumentException("Required array countedLength exceeds array limit in Java!");
+		}
+		final var result = new float[(int) countedLength];
+		var counter = 0;
+		final var floatBuffer = FloatBuffer.wrap(result);
+		for (final var stream : streams) {
+			final var array = stream.fusedMapBinaryAndThenToArray(binaryOperator, floatBinaryOperator);
+			floatBuffer.put(counter, array);
+			counter += array.length;
+		}
+		return result;
 	}
 }

@@ -8,14 +8,13 @@ import ch.antonovic.tabularstream.internal.FloatTabularStreamAggregator;
 import ch.antonovic.tabularstream.internal.tabular.floattabular.stream.*;
 import ch.antonovic.tabularstream.internal.tabular.objecttabular.stream.ObjectTabularStreamWithFloatFunctionMapping;
 import ch.antonovic.tabularstream.iterator.FloatTabularStreamIterator;
+import jdk.incubator.vector.FloatVector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.function.IntFunction;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 public abstract class FloatTabularStream extends TabularStream<float[], FloatTabularStreamIterator>/*extends AbstractStream*/ /*implements TableStreamIterator<float[]>*/ {
 
@@ -33,7 +32,7 @@ public abstract class FloatTabularStream extends TabularStream<float[], FloatTab
 		};
 	}
 
-	public static FloatTabularStream of(Optional<float[]> optional) {
+	public static FloatTabularStream of(final Optional<float[]> optional) {
 		return optional.map(FloatUnaryTabularStream::of).orElse(new FloatUnaryTabularStreamWithColumn(new float[0]));
 	}
 
@@ -74,6 +73,16 @@ public abstract class FloatTabularStream extends TabularStream<float[], FloatTab
 	public final FloatUnaryTabularStream mapUnary(final FloatUnaryOperator operator) {
 		checkRequiredArity(this, 1);
 		return new FloatTabularStreamWithUnaryMapping(this, operator);
+	}
+
+	public abstract float[] fusedMapUnaryAndThenToArray(UnaryOperator<FloatVector> unaryOperator, FloatUnaryOperator floatUnaryOperator);
+
+	public abstract float[] fusedMapBinaryAndThenToArray(BinaryOperator<FloatVector> binaryOperator, FloatBinaryOperator floatBinaryOperator);
+
+	@Deprecated
+	public final FloatUnaryTabularStream mapUnaryWithSimd(final UnaryOperator<FloatVector> unaryOperator) {
+		checkRequiredArity(this, 1);
+		return new FloatTabularStreamWithUnarySimdMapping(this, unaryOperator);
 	}
 
 	public final <T> ObjectTabularStream<T> mapToObject(final FloatFunction<T> operator, final Class<T> type) {
@@ -131,6 +140,16 @@ public abstract class FloatTabularStream extends TabularStream<float[], FloatTab
 		iterator.reset();
 		return result;
 	}
+	// TODO
+/*
+	public void toArrayColumnStored(final float[][] target) {
+		final var countedLength = count();
+		LOGGER.debug("counted length: {}", countedLength);
+		LOGGER.debug("number of columns: {}", numberOfColumns);
+		if (countedLength > target[0].length) {
+			throw new IllegalArgumentException("Target array is too small to store the elements of the tabular stream!");
+		}
+	}*/
 
 	public Optional<float[]> lengthsOfVectors(final FloatTabularStream stream) {
 		final FloatUnaryOperator sqrt = x -> (float) Math.sqrt(x);

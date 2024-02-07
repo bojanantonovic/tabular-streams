@@ -5,6 +5,7 @@ import ch.antonovic.tabularstream.internal.DoubleTabularStreamAggregator;
 import ch.antonovic.tabularstream.internal.tabular.doubletabular.stream.*;
 import ch.antonovic.tabularstream.internal.tabular.objecttabular.stream.ObjectTabularStreamWithDoubleFunctionMapping;
 import ch.antonovic.tabularstream.iterator.DoubleTabularStreamIterator;
+import jdk.incubator.vector.DoubleVector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -76,6 +77,10 @@ public abstract class DoubleTabularStream extends TabularStream<double[], Double
 		checkRequiredArity(this, 2);
 		return new DoubleTabularStreamWithBinaryMapping(this, operator);
 	}
+
+	public abstract double[] fusedMapUnaryAndThenToArray(UnaryOperator<DoubleVector> unaryOperator, DoubleUnaryOperator floatUnaryOperator);
+
+	public abstract double[] fusedMapBinaryAndThenToArray(BinaryOperator<DoubleVector> binaryOperator, DoubleBinaryOperator floatBinaryOperator);
 
 	public DoubleTabularStream mapAllValuesUnary(final DoubleUnaryOperator operator) {
 		return new DoubleTabularStreamWithAllValuesUnaryMapping(this, operator);

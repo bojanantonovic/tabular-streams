@@ -20,8 +20,18 @@ public abstract class ObjectTabularStreamIteratorWrapper<T> extends AbstractObje
 	}
 
 	@Override
+	public boolean hasNext(final long stepWidth) {
+		return parentIterator.hasNext(stepWidth);
+	}
+
+	@Override
 	public void moveCursorToNextPosition() {
 		parentIterator.moveCursorToNextPosition();
+	}
+
+	@Override
+	public void moveCursorToNextPosition(final long stepWidth) {
+		parentIterator.moveCursorToNextPosition(stepWidth);
 	}
 
 	@Override

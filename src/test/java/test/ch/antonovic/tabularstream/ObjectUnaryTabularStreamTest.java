@@ -1,5 +1,6 @@
-package ch.antonovic.tabularstream;
+package test.ch.antonovic.tabularstream;
 
+import ch.antonovic.tabularstream.ObjectUnaryTabularStream;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

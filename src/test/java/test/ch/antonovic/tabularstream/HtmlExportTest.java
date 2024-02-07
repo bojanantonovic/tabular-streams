@@ -1,5 +1,7 @@
-package ch.antonovic.tabularstream;
+package test.ch.antonovic.tabularstream;
 
+import ch.antonovic.tabularstream.FloatTabularStream;
+import ch.antonovic.tabularstream.HtmlExport;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

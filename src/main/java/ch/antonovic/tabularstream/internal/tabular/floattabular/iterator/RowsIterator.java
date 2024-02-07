@@ -3,6 +3,8 @@ package ch.antonovic.tabularstream.internal.tabular.floattabular.iterator;
 import ch.antonovic.tabularstream.function.LoaderWithOffset;
 import ch.antonovic.tabularstream.function.StoreWithOffset;
 import ch.antonovic.tabularstream.iterator.FloatTabularStreamIterator;
+import jdk.incubator.vector.FloatVector;
+import jdk.incubator.vector.VectorSpecies;
 
 import java.util.function.BinaryOperator;
 import java.util.function.IntFunction;
@@ -33,8 +35,18 @@ public class RowsIterator implements FloatTabularStreamIterator {
 	}
 
 	@Override
+	public boolean hasNext(final long stepWidth) {
+		return actualPosition + stepWidth <= numberOfRows;
+	}
+
+	@Override
 	public void moveCursorToNextPosition() {
 		actualPosition++;
+	}
+
+	@Override
+	public void moveCursorToNextPosition(final long stepWidth) {
+		actualPosition += (int) stepWidth;
 	}
 
 	@Override
@@ -53,6 +65,59 @@ public class RowsIterator implements FloatTabularStreamIterator {
 		moveCursorToNextPosition();
 		return current;
 	}
+
+	public void next(final float[] target) {
+		if (target.length != numberOfColumns) {
+			throw new IllegalArgumentException();
+		}
+		for (var i = 0; i < numberOfColumns; i++) {
+			target[i] = valueFromColumn(i);
+		}
+	}
+
+	public float[][] nextChunk(final int stepWidth) {
+		final int remainingRows = numberOfRows - actualPosition;
+		final int chunkSize = Math.min(stepWidth, remainingRows);
+		final float[][] chunk = new float[numberOfColumns][chunkSize];
+		for (int i = 0; i < numberOfColumns; i++) {
+			System.arraycopy(table[i], actualPosition, chunk[i], 0, chunkSize);
+		}
+		actualPosition += chunkSize;
+		return chunk;
+	}
+
+	@Override
+	public FloatVector valueFromColumn(final int column, final VectorSpecies<Float> species) {
+		return (FloatVector) species.fromArray(table[column], actualPosition);
+	}
+
+	public FloatVector nextChunkWithUnaryMapping(final VectorSpecies<Float> species, final UnaryOperator<FloatVector> unaryOperator) {
+		return unaryOperator.apply(valueFromColumn(0, species));
+	}
+
+	public FloatVector nextChunkWithBinaryMapping(final VectorSpecies<Float> species, final BinaryOperator<FloatVector> binaryOperator) {
+		return binaryOperator.apply( //
+				valueFromColumn(0, species), //
+				valueFromColumn(1, species));
+	}
+
+	public void nextChunkWithUnaryMapping(final VectorSpecies<Float> species, final UnaryOperator<FloatVector> unaryOperator, final float[] target) {
+		final var doubleVector = nextChunkWithUnaryMapping(species, unaryOperator);
+		storeSimdVector(doubleVector, target);
+	}
+
+	public void nextChunkWithBinaryMapping(final VectorSpecies<Float> species, final BinaryOperator<FloatVector> binaryOperator, final float[] target) {
+		final var doubleVector = nextChunkWithBinaryMapping(species, binaryOperator);
+		storeSimdVector(doubleVector, target);
+	}
+
+	public void storeSimdVector(final FloatVector vector, final float[] target) {
+		vector.intoArray(target, actualPosition);
+	}
+/*
+	public void nextByOffset(final float[] target, final int offset) {
+		target[offset] = valueFromColumn(0);
+	}*/
 
 	// TODO
 	public <R> float[] loadAndMapUnary(final LoaderWithOffset<float[], R> loader, final UnaryOperator<R> unaryOperator, final StoreWithOffset<R, float[]> storeWithOffset, final int stepWidth) {

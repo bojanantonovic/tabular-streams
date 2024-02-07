@@ -5,6 +5,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.lang.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
 public class ComposablePredicateIterator<R, I extends TabularStreamIterator<R>> implements TabularStreamIterator<R> {
@@ -14,8 +17,10 @@ public class ComposablePredicateIterator<R, I extends TabularStreamIterator<R>> 
 	private final Predicate<? super R> predicate;
 
 	private @Nullable R currentValue = null;
+	private List<R> currentChunk;
 
 	private boolean nextValidElementExists = false;
+	private boolean nextValidChunkExists = false;
 
 	private long numberOfDeliveredElements = 0;
 
@@ -50,6 +55,23 @@ public class ComposablePredicateIterator<R, I extends TabularStreamIterator<R>> 
 	@Override
 	public boolean hasNext() {
 		return nextValidElementExists;
+	}
+
+	@Override
+	public void moveCursorToNextPosition(final long stepWidth) {
+		currentChunk = new ArrayList<>((int) stepWidth);
+		for (var i = 0; i < stepWidth; i++) {
+			if (parentIterator.hasNext(stepWidth)) {
+				currentChunk.add(parentIterator.next()); // TODO stepWidth
+			} else {
+				throw new NoSuchElementException();
+			}
+		}
+	}
+
+	@Override
+	public boolean hasNext(final long stepWidth) {
+		return nextValidChunkExists;
 	}
 
 	@Override

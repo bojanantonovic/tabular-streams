@@ -1,6 +1,8 @@
 package ch.antonovic.tabularstream.internal.tabular.floattabular.iterator;
 
 import ch.antonovic.tabularstream.iterator.FloatTabularStreamIterator;
+import jdk.incubator.vector.FloatVector;
+import jdk.incubator.vector.VectorSpecies;
 
 public class FloatTabularStreamIteratorWrapper implements FloatTabularStreamIterator {
 	protected final FloatTabularStreamIterator parentIterator;
@@ -15,6 +17,11 @@ public class FloatTabularStreamIteratorWrapper implements FloatTabularStreamIter
 	}
 
 	@Override
+	public FloatVector valueFromColumn(final int column, final VectorSpecies<Float> species) {
+		return parentIterator.valueFromColumn(column, species);
+	}
+
+	@Override
 	public boolean hasNext() {
 		return parentIterator.hasNext();
 	}
@@ -22,6 +29,11 @@ public class FloatTabularStreamIteratorWrapper implements FloatTabularStreamIter
 	@Override
 	public float[] next() {
 		return parentIterator.next();
+	}
+
+	@Override
+	public boolean hasNext(final long stepWidth) {
+		return parentIterator.hasNext();
 	}
 
 	@Override
@@ -37,5 +49,10 @@ public class FloatTabularStreamIteratorWrapper implements FloatTabularStreamIter
 	@Override
 	public void moveCursorToNextPosition() {
 		parentIterator.moveCursorToNextPosition();
+	}
+
+	@Override
+	public void moveCursorToNextPosition(final long stepWidth) {
+		parentIterator.moveCursorToNextPosition(stepWidth);
 	}
 }

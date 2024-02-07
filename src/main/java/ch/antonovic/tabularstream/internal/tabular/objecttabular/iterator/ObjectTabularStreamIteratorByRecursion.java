@@ -51,10 +51,22 @@ public abstract class ObjectTabularStreamIteratorByRecursion<T> extends Abstract
 	}
 
 	@Override
+	public boolean hasNext(final long stepWidth) {
+		return true;
+	}
+
+	@Override
 	public void moveCursorToNextPosition() {
 		actualPosition++;
 		if (actualPosition >= cache.size()) {
 			cache.add(computeNextValue());
+		}
+	}
+
+	@Override
+	public void moveCursorToNextPosition(final long stepWidth) {
+		for (var i = 0; i < stepWidth; i++) {
+			moveCursorToNextPosition();
 		}
 	}
 

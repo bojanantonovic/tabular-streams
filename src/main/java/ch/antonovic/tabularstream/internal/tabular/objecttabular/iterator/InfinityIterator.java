@@ -10,6 +10,7 @@ public class InfinityIterator<T> extends AbstractObjectTabularStreamIterator<T> 
 	private int actualPosition = 0;
 
 	private @Nullable T[] cachedCurrentValue;
+	private @Nullable T[][] currentChunk;
 
 	public InfinityIterator(final Supplier<T[]> supplier) {
 		this.supplier = supplier;
@@ -26,9 +27,23 @@ public class InfinityIterator<T> extends AbstractObjectTabularStreamIterator<T> 
 	}
 
 	@Override
+	public boolean hasNext(final long stepWidth) {
+		return true;
+	}
+
+	@Override
 	public void moveCursorToNextPosition() {
 		cachedCurrentValue = supplier.get();
 		actualPosition++;
+	}
+
+	@Override
+	public void moveCursorToNextPosition(final long stepWidth) {
+		currentChunk = (T[][]) new Object[(int) stepWidth][]; // TODO
+		for (int i = 0; i < stepWidth; i++) {
+			moveCursorToNextPosition();
+			currentChunk[i] = cachedCurrentValue;
+		}
 	}
 
 	@Override

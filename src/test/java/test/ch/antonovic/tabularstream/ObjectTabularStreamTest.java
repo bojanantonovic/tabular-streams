@@ -1,5 +1,6 @@
-package ch.antonovic.tabularstream;
+package test.ch.antonovic.tabularstream;
 
+import ch.antonovic.tabularstream.ObjectTabularStream;
 import ch.antonovic.tabularstream.function.TernaryOperator;
 import org.junit.jupiter.api.Test;
 

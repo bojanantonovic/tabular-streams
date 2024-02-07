@@ -23,6 +23,11 @@ public class ObjectFloatTabularStreamIterator<T> extends AbstractObjectTabularSt
 	}
 
 	@Override
+	public void moveCursorToNextPosition(final long stepWidth) {
+		sourceIterator.moveCursorToNextPosition(stepWidth);
+	}
+
+	@Override
 	public long numberOfDeliveredElements() {
 		return sourceIterator.numberOfDeliveredElements();
 	}
@@ -40,6 +45,11 @@ public class ObjectFloatTabularStreamIterator<T> extends AbstractObjectTabularSt
 	@Override
 	public boolean hasNext() {
 		return sourceIterator.hasNext();
+	}
+
+	@Override
+	public boolean hasNext(final long stepWidth) {
+		return sourceIterator.hasNext(stepWidth);
 	}
 
 	@Override

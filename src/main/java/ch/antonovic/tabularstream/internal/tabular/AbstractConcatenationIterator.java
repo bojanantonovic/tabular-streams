@@ -44,24 +44,34 @@ public abstract class AbstractConcatenationIterator<R, I extends TabularStreamIt
 
 	@Override
 	public final void moveCursorToNextPosition() {
-		if (currentStreamIndex < numberOfIterators && getCurrentStream().hasNext()) {
-			getCurrentStream().moveCursorToNextPosition();
+		moveCursorToNextPosition(1);
+	}
+
+	@Override
+	public void moveCursorToNextPosition(final long stepWidth) {
+		if (currentStreamIndex < numberOfIterators && getCurrentStream().hasNext(stepWidth)) {
+			getCurrentStream().moveCursorToNextPosition(stepWidth);
 		} else {
 			currentStreamIndex++;
 			if (currentStreamIndex >= numberOfIterators) {
 				throw new NoSuchElementException();
 			}
-			getCurrentStream().moveCursorToNextPosition();
+			getCurrentStream().moveCursorToNextPosition(stepWidth);
 		}
 	}
 
 	@Override
 	public boolean hasNext() {
-		if (currentStreamIndex < numberOfIterators && getCurrentStream().hasNext()) {
+		return hasNext(1);
+	}
+
+	@Override
+	public boolean hasNext(final long stepWidth) {
+		if (currentStreamIndex < numberOfIterators && getCurrentStream().hasNext(stepWidth)) {
 			return true;
 		}
 		if (currentStreamIndex <= numberOfIterators - 2) {
-			return iterators.get(currentStreamIndex + 1).hasNext();
+			return iterators.get(currentStreamIndex + 1).hasNext(stepWidth);
 		}
 
 		return false;

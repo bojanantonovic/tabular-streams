@@ -1,6 +1,8 @@
 package ch.antonovic.tabularstream.internal.tabular.doubletabular.iterator;
 
 import ch.antonovic.tabularstream.iterator.DoubleTabularStreamIterator;
+import jdk.incubator.vector.DoubleVector;
+import jdk.incubator.vector.VectorSpecies;
 
 public class DoubleTabularStreamIteratorWrapper implements DoubleTabularStreamIterator {
 	protected final DoubleTabularStreamIterator parentIterator;
@@ -15,7 +17,17 @@ public class DoubleTabularStreamIteratorWrapper implements DoubleTabularStreamIt
 	}
 
 	@Override
+	public DoubleVector valueFromColumn(final int column, final VectorSpecies<Double> species) {
+		return parentIterator.valueFromColumn(column, species);
+	}
+
+	@Override
 	public boolean hasNext() {
+		return parentIterator.hasNext();
+	}
+
+	@Override
+	public boolean hasNext(final long stepWidth) {
 		return parentIterator.hasNext();
 	}
 
@@ -37,5 +49,10 @@ public class DoubleTabularStreamIteratorWrapper implements DoubleTabularStreamIt
 	@Override
 	public void moveCursorToNextPosition() {
 		parentIterator.moveCursorToNextPosition();
+	}
+
+	@Override
+	public void moveCursorToNextPosition(long stepWidth) {
+		parentIterator.moveCursorToNextPosition(stepWidth);
 	}
 }
