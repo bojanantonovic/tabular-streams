@@ -1,6 +1,7 @@
 package ch.antonovic.tabularstream.internal.tabular.objecttabular.stream;
 
 import ch.antonovic.tabularstream.ObjectTabularStream;
+import ch.antonovic.tabularstream.TabularStream;
 import ch.antonovic.tabularstream.internal.tabular.objecttabular.iterator.ConcatenationIterator;
 import ch.antonovic.tabularstream.iterator.ObjectTabularStreamIterator;
 
@@ -36,6 +37,11 @@ public class ObjectTabularStreamWithConcatenation<T> extends ObjectTabularStream
 	public int numberOfLayers() {
 		final var max = Arrays.stream(streams).mapToInt(ObjectTabularStream::numberOfLayers).max();
 		return 1 + max.orElse(0);
+	}
+
+	@Override
+	public long count() {
+		return Arrays.stream(streams).mapToLong(TabularStream::count).sum();
 	}
 
 	@Override

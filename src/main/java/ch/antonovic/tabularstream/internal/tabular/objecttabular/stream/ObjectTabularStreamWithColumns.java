@@ -33,6 +33,11 @@ public class ObjectTabularStreamWithColumns<T> extends ObjectTabularStream<T> {
 	}
 
 	@Override
+	public long count() {
+		return numberOfRows;
+	}
+
+	@Override
 	public boolean isInfinite() {
 		return false;
 	}

@@ -32,6 +32,11 @@ public class DoubleTabularStreamWithColumns extends DoubleTabularStream {
 	}
 
 	@Override
+	public long count() {
+		return numberOfRows;
+	}
+
+	@Override
 	public boolean isInfinite() {
 		return false;
 	}

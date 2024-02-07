@@ -1,7 +1,8 @@
 package ch.antonovic.tabularstream.internal.tabular.floattabular.stream;
 
-import ch.antonovic.tabularstream.function.FloatBinaryOperator;
 import ch.antonovic.tabularstream.FloatTabularStream;
+import ch.antonovic.tabularstream.TabularStream;
+import ch.antonovic.tabularstream.function.FloatBinaryOperator;
 import ch.antonovic.tabularstream.internal.tabular.floattabular.iterator.ConcatenationIterator;
 import ch.antonovic.tabularstream.iterator.FloatTabularStreamIterator;
 
@@ -36,6 +37,11 @@ public class FloatTabularStreamWithConcatenation extends FloatTabularStream {
 	public int numberOfLayers() {
 		final var max = Arrays.stream(streams).mapToInt(FloatTabularStream::numberOfLayers).max();
 		return 1 + max.orElse(0);
+	}
+
+	@Override
+	public long count() {
+		return Arrays.stream(streams).mapToLong(TabularStream::count).sum();
 	}
 
 	@Override

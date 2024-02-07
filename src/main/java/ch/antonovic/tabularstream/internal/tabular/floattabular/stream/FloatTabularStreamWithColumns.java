@@ -32,6 +32,11 @@ public class FloatTabularStreamWithColumns extends FloatTabularStream {
 	}
 
 	@Override
+	public long count() {
+		return numberOfRows;
+	}
+
+	@Override
 	public boolean isInfinite() {
 		return false;
 	}
