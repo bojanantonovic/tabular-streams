@@ -68,16 +68,15 @@ public abstract class ObjectTabularStream<T> extends TabularStream<T[], ObjectTa
 		return new ObjectTabularStreamWithFilter<>(this, predicate);
 	}
 
+	public final <U> ObjectTabularStream<U> map(final Function<T, U> operator, final Class<U> type) {
+		checkRequiredArity(this, 1);
+		return new ObjectTabularStreamWithFunctionMapping<>(this, operator, type);
+	}
+
 	public final ObjectUnaryTabularStream<T> mapUnary(final UnaryOperator<T> operator) {
 		checkRequiredArity(this, 1);
 		return new ObjectTabularStreamWithUnaryMapping<>(this, operator);
 	}
-	// TODO
-/*
-	public final <U> ObjectTabularStream<T> mapToObject(final Function<T,U> operator, final Class<U> type) {
-		checkRequiredArity(this, 1);
-		return new ObjectTabularStreamWithObjectFunctionMapping<>(this, operator, type);
-	}*/
 
 	public final ObjectUnaryTabularStream<T> mapBinary(final BinaryOperator<T> operator) {
 		checkRequiredArity(this, 2);

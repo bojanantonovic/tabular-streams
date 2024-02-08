@@ -237,4 +237,20 @@ class ObjectTabularStreamTest {
 		final var expected = new Integer[][] {{2, 4, 6, 8}, {6, 7, 8, 9}};
 		assertArrayEquals(expected, stream.toArrayColumnStored(Integer[][]::new, Integer[]::new));
 	}
+
+	@Test
+	void map() {
+		// arrange
+		final var sourceStream = ObjectTabularStream.of(Integer.class, a);
+		// act
+		final var stream = sourceStream.map(x -> (long) x, Long.class);
+		// assert
+		assertEquals(1, stream.getNumberOfColumns());
+		assertEquals(4, stream.count());
+		assertFalse(stream.isInfinite());
+		assertFalse(stream.isFiltered());
+		assertEquals(2, stream.numberOfLayers());
+		final var array = stream.toArray(Long[][]::new);
+		assertArrayEquals(new Long[][] {{1L}, {2L}, {3L}, {4L}}, array);
+	}
 }

@@ -5,56 +5,26 @@ import ch.antonovic.tabularstream.iterator.FloatTabularStreamIterator;
 
 import java.lang.reflect.Array;
 
-public class FromFloatTabularStreamIterator<T> extends AbstractObjectTabularStreamIterator<T> {
-	private final FloatTabularStreamIterator sourceIterator;
+public class FromFloatTabularStreamIterator<T> extends AbstractToObjectTabularStreamIterator<float[]/*, FloatTabularStreamIterator*/, T> {
 	private final FloatFunction<T> floatFunction;
 
-	private final Class<T> type;
-
 	public FromFloatTabularStreamIterator(final FloatTabularStreamIterator sourceIterator, final FloatFunction<T> floatFunction, final Class<T> type) {
-		this.sourceIterator = sourceIterator;
+		super(sourceIterator, type);
 		this.floatFunction = floatFunction;
-		this.type = type;
 	}
 
-	@Override
-	public void moveCursorToNextPosition() {
-		sourceIterator.moveCursorToNextPosition();
-	}
-
-	@Override
-	public void moveCursorToNextPosition(final long stepWidth) {
-		sourceIterator.moveCursorToNextPosition(stepWidth);
-	}
-
-	@Override
-	public long numberOfDeliveredElements() {
-		return sourceIterator.numberOfDeliveredElements();
-	}
-
-	@Override
-	public void reset() {
-		sourceIterator.reset();
-	}
-
-	@Override
-	public boolean hasNext() {
-		return sourceIterator.hasNext();
-	}
-
-	@Override
-	public boolean hasNext(final long stepWidth) {
-		return sourceIterator.hasNext(stepWidth);
+	private FloatTabularStreamIterator getSourceIterator() {
+		return (FloatTabularStreamIterator) sourceIterator;
 	}
 
 	@Override
 	public T valueFromColumn(final int index) {
-		return floatFunction.apply(sourceIterator.valueFromColumn(index));
+		return floatFunction.apply(getSourceIterator().valueFromColumn(index));
 	}
 
 	@Override
 	public T[] next() {
-		final var next = sourceIterator.next();
+		final var next = getSourceIterator().next();
 		final var result = (T[]) Array.newInstance(type, next.length);
 		for (var i = 0; i < next.length; i++) {
 			result[i] = floatFunction.apply(next[i]);
