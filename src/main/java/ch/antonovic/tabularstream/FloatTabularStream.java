@@ -145,16 +145,6 @@ public abstract class FloatTabularStream extends TabularStream<float[], FloatTab
 		iterator.reset();
 		return result;
 	}
-	// TODO
-/*
-	public void toArrayColumnStored(final float[][] target) {
-		final var countedLength = count();
-		LOGGER.debug("counted length: {}", countedLength);
-		LOGGER.debug("number of columns: {}", numberOfColumns);
-		if (countedLength > target[0].length) {
-			throw new IllegalArgumentException("Target array is too small to store the elements of the tabular stream!");
-		}
-	}*/
 
 	public Optional<float[]> lengthsOfVectors(final FloatTabularStream stream) {
 		final FloatUnaryOperator sqrt = x -> (float) Math.sqrt(x);
