@@ -1,6 +1,7 @@
 package ch.antonovic.tabularstream.internal.tabular.objecttabular.iterator;
 
 import ch.antonovic.tabularstream.iterator.ObjectTabularStreamIterator;
+import ch.antonovic.tabularstream.iterator.TabularStreamIterator;
 
 import java.lang.reflect.Array;
 import java.util.function.Function;
@@ -8,7 +9,7 @@ import java.util.function.Function;
 public class FromObjectTabularStreamIterator<U, T> extends AbstractToObjectTabularStreamIterator<U/*, ObjectTabularStreamIterator<U>*/, T> {
 	private final Function<U, T> function;
 
-	public FromObjectTabularStreamIterator(final ObjectTabularStreamIterator<U> sourceIterator, final Function<U, T> function, final Class<T> type) {
+	public FromObjectTabularStreamIterator(final TabularStreamIterator<U> sourceIterator, final Function<U, T> function, final Class<T> type) {
 		super(sourceIterator, type);
 		this.function = function;
 	}

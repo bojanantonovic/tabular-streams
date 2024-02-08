@@ -2,13 +2,14 @@ package ch.antonovic.tabularstream.internal.tabular.objecttabular.iterator;
 
 import ch.antonovic.tabularstream.function.FloatFunction;
 import ch.antonovic.tabularstream.iterator.FloatTabularStreamIterator;
+import ch.antonovic.tabularstream.iterator.TabularStreamIterator;
 
 import java.lang.reflect.Array;
 
 public class FromFloatTabularStreamIterator<T> extends AbstractToObjectTabularStreamIterator<float[]/*, FloatTabularStreamIterator*/, T> {
 	private final FloatFunction<T> floatFunction;
 
-	public FromFloatTabularStreamIterator(final FloatTabularStreamIterator sourceIterator, final FloatFunction<T> floatFunction, final Class<T> type) {
+	public FromFloatTabularStreamIterator(final TabularStreamIterator<?> sourceIterator, final FloatFunction<T> floatFunction, final Class<T> type) {
 		super(sourceIterator, type);
 		this.floatFunction = floatFunction;
 	}
