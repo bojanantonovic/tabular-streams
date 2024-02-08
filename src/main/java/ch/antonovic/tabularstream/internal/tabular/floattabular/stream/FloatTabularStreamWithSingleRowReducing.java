@@ -3,7 +3,9 @@ package ch.antonovic.tabularstream.internal.tabular.floattabular.stream;
 import ch.antonovic.tabularstream.FloatTabularStream;
 import ch.antonovic.tabularstream.FloatUnaryTabularStream;
 import ch.antonovic.tabularstream.function.FloatBinaryOperator;
+import ch.antonovic.tabularstream.function.FloatTernaryOperator;
 import ch.antonovic.tabularstream.function.FloatUnaryOperator;
+import ch.antonovic.tabularstream.function.TernaryOperator;
 import jdk.incubator.vector.FloatVector;
 
 import java.util.function.BinaryOperator;
@@ -44,6 +46,11 @@ public abstract class FloatTabularStreamWithSingleRowReducing extends FloatUnary
 
 	@Override
 	public float[] fusedMapBinaryAndThenToArray(final BinaryOperator<FloatVector> binaryOperator, final FloatBinaryOperator floatBinaryOperator) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public float[] fusedMapTernaryAndThenToArray(final TernaryOperator<FloatVector> ternaryOperator, final FloatTernaryOperator floatTernaryOperator) {
 		throw new UnsupportedOperationException();
 	}
 }

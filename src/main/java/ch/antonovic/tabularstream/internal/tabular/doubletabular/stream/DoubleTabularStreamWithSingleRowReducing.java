@@ -2,6 +2,8 @@ package ch.antonovic.tabularstream.internal.tabular.doubletabular.stream;
 
 import ch.antonovic.tabularstream.DoubleTabularStream;
 import ch.antonovic.tabularstream.DoubleUnaryTabularStream;
+import ch.antonovic.tabularstream.function.DoubleTernaryOperator;
+import ch.antonovic.tabularstream.function.TernaryOperator;
 import jdk.incubator.vector.DoubleVector;
 
 import java.util.function.BinaryOperator;
@@ -44,6 +46,11 @@ public abstract class DoubleTabularStreamWithSingleRowReducing extends DoubleUna
 
 	@Override
 	public double[] fusedMapBinaryAndThenToArray(final BinaryOperator<DoubleVector> binaryOperator, final DoubleBinaryOperator doubleBinaryOperator) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public double[] fusedMapTernaryAndThenToArray(final TernaryOperator<DoubleVector> ternaryOperator, final DoubleTernaryOperator doubleTernaryOperator) {
 		throw new UnsupportedOperationException();
 	}
 }

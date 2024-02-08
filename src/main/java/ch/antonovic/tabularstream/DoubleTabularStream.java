@@ -1,6 +1,7 @@
 package ch.antonovic.tabularstream;
 
 import ch.antonovic.tabularstream.function.DoubleTernaryOperator;
+import ch.antonovic.tabularstream.function.TernaryOperator;
 import ch.antonovic.tabularstream.internal.DoubleTabularStreamAggregator;
 import ch.antonovic.tabularstream.internal.tabular.doubletabular.stream.*;
 import ch.antonovic.tabularstream.internal.tabular.objecttabular.stream.ObjectTabularStreamWithDoubleFunctionMapping;
@@ -25,6 +26,7 @@ public abstract class DoubleTabularStream extends TabularStream<double[], Double
 		return switch (columns.length) {
 			case 1 -> new DoubleUnaryTabularStreamWithColumn(columns[0]);
 			case 2 -> new DoubleBinaryTabularStreamWithColumns(columns[0], columns[1]);
+			case 3 -> new DoubleTernaryTabularStreamWithColumns(columns[0], columns[1], columns[2]);
 			default -> new DoubleTabularStreamWithColumns(columns);
 		};
 	}
@@ -78,9 +80,16 @@ public abstract class DoubleTabularStream extends TabularStream<double[], Double
 		return new DoubleTabularStreamWithBinaryMapping(this, operator);
 	}
 
-	public abstract double[] fusedMapUnaryAndThenToArray(UnaryOperator<DoubleVector> unaryOperator, DoubleUnaryOperator floatUnaryOperator);
+	public final DoubleUnaryTabularStream mapTernary(final DoubleTernaryOperator operator) {
+		checkRequiredArity(this, 3);
+		return new DoubleTabularStreamWithTernaryMapping(this, operator);
+	}
 
-	public abstract double[] fusedMapBinaryAndThenToArray(BinaryOperator<DoubleVector> binaryOperator, DoubleBinaryOperator floatBinaryOperator);
+	public abstract double[] fusedMapUnaryAndThenToArray(UnaryOperator<DoubleVector> unaryOperator, DoubleUnaryOperator doubleUnaryOperator);
+
+	public abstract double[] fusedMapBinaryAndThenToArray(BinaryOperator<DoubleVector> binaryOperator, DoubleBinaryOperator doubleBinaryOperator);
+
+	public abstract double[] fusedMapTernaryAndThenToArray(TernaryOperator<DoubleVector> ternaryOperator, DoubleTernaryOperator doubleTernaryOperator);
 
 	public DoubleTabularStream mapAllValuesUnary(final DoubleUnaryOperator operator) {
 		return new DoubleTabularStreamWithAllValuesUnaryMapping(this, operator);

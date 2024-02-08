@@ -1,9 +1,6 @@
 package ch.antonovic.tabularstream;
 
-import ch.antonovic.tabularstream.function.FloatBinaryOperator;
-import ch.antonovic.tabularstream.function.FloatFunction;
-import ch.antonovic.tabularstream.function.FloatTernaryOperator;
-import ch.antonovic.tabularstream.function.FloatUnaryOperator;
+import ch.antonovic.tabularstream.function.*;
 import ch.antonovic.tabularstream.internal.FloatTabularStreamAggregator;
 import ch.antonovic.tabularstream.internal.tabular.floattabular.stream.*;
 import ch.antonovic.tabularstream.internal.tabular.objecttabular.stream.ObjectTabularStreamWithFloatFunctionMapping;
@@ -28,6 +25,7 @@ public abstract class FloatTabularStream extends TabularStream<float[], FloatTab
 		return switch (columns.length) {
 			case 1 -> new FloatUnaryTabularStreamWithColumn(columns[0]);
 			case 2 -> new FloatBinaryTabularStreamWithColumns(columns[0], columns[1]);
+			case 3 -> new FloatTernaryTabularStreamWithColumns(columns[0], columns[1], columns[2]);
 			default -> new FloatTabularStreamWithColumns(columns);
 		};
 	}
@@ -79,6 +77,8 @@ public abstract class FloatTabularStream extends TabularStream<float[], FloatTab
 
 	public abstract float[] fusedMapBinaryAndThenToArray(BinaryOperator<FloatVector> binaryOperator, FloatBinaryOperator floatBinaryOperator);
 
+	public abstract float[] fusedMapTernaryAndThenToArray(TernaryOperator<FloatVector> ternaryOperator, FloatTernaryOperator floatTernaryOperator);
+
 	@Deprecated
 	public final FloatUnaryTabularStream mapUnaryWithSimd(final UnaryOperator<FloatVector> unaryOperator) {
 		checkRequiredArity(this, 1);
@@ -93,6 +93,11 @@ public abstract class FloatTabularStream extends TabularStream<float[], FloatTab
 	public final FloatUnaryTabularStream mapBinary(final FloatBinaryOperator operator) {
 		checkRequiredArity(this, 2);
 		return new FloatTabularStreamWithBinaryMapping(this, operator);
+	}
+
+	public final FloatUnaryTabularStream mapTernary(final FloatTernaryOperator operator) {
+		checkRequiredArity(this, 3);
+		return new FloatTabularStreamWithTernaryMapping(this, operator);
 	}
 
 	public FloatTabularStream mapAllValuesUnary(final FloatUnaryOperator operator) {

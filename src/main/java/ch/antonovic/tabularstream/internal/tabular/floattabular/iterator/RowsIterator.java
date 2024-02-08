@@ -2,6 +2,7 @@ package ch.antonovic.tabularstream.internal.tabular.floattabular.iterator;
 
 import ch.antonovic.tabularstream.function.LoaderWithOffset;
 import ch.antonovic.tabularstream.function.StoreWithOffset;
+import ch.antonovic.tabularstream.function.TernaryOperator;
 import ch.antonovic.tabularstream.iterator.FloatTabularStreamIterator;
 import jdk.incubator.vector.FloatVector;
 import jdk.incubator.vector.VectorSpecies;
@@ -101,6 +102,13 @@ public class RowsIterator implements FloatTabularStreamIterator {
 				valueFromColumn(1, species));
 	}
 
+	public FloatVector nextChunkWithTernaryMapping(final VectorSpecies<Float> species, final TernaryOperator<FloatVector> ternaryOperator) {
+		return ternaryOperator.apply( //
+				valueFromColumn(0, species), //
+				valueFromColumn(1, species), //
+				valueFromColumn(2, species));
+	}
+
 	public void nextChunkWithUnaryMapping(final VectorSpecies<Float> species, final UnaryOperator<FloatVector> unaryOperator, final float[] target) {
 		final var doubleVector = nextChunkWithUnaryMapping(species, unaryOperator);
 		storeSimdVector(doubleVector, target);
@@ -108,6 +116,11 @@ public class RowsIterator implements FloatTabularStreamIterator {
 
 	public void nextChunkWithBinaryMapping(final VectorSpecies<Float> species, final BinaryOperator<FloatVector> binaryOperator, final float[] target) {
 		final var doubleVector = nextChunkWithBinaryMapping(species, binaryOperator);
+		storeSimdVector(doubleVector, target);
+	}
+
+	public void nextChunkWithTernaryMapping(final VectorSpecies<Float> species, final TernaryOperator<FloatVector> ternaryOperator, final float[] target) {
+		final var doubleVector = nextChunkWithTernaryMapping(species, ternaryOperator);
 		storeSimdVector(doubleVector, target);
 	}
 

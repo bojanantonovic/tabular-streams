@@ -3,7 +3,9 @@ package ch.antonovic.tabularstream.internal.tabular.floattabular.stream;
 import ch.antonovic.tabularstream.FloatTabularStream;
 import ch.antonovic.tabularstream.TabularStream;
 import ch.antonovic.tabularstream.function.FloatBinaryOperator;
+import ch.antonovic.tabularstream.function.FloatTernaryOperator;
 import ch.antonovic.tabularstream.function.FloatUnaryOperator;
+import ch.antonovic.tabularstream.function.TernaryOperator;
 import ch.antonovic.tabularstream.internal.tabular.floattabular.iterator.ConcatenationIterator;
 import ch.antonovic.tabularstream.iterator.FloatTabularStreamIterator;
 import jdk.incubator.vector.FloatVector;
@@ -118,6 +120,25 @@ public class FloatTabularStreamWithConcatenation extends FloatTabularStream {
 		final var floatBuffer = FloatBuffer.wrap(result);
 		for (final var stream : streams) {
 			final var array = stream.fusedMapBinaryAndThenToArray(binaryOperator, floatBinaryOperator);
+			floatBuffer.put(counter, array);
+			counter += array.length;
+		}
+		return result;
+	}
+
+	@Override
+	public float[] fusedMapTernaryAndThenToArray(final TernaryOperator<FloatVector> ternaryOperator, final FloatTernaryOperator floatTernaryOperator) {
+		final var countedLength = count();
+		LOGGER.debug("counted length: {}", countedLength);
+		LOGGER.debug("number of columns: {}", numberOfColumns);
+		if (countedLength > Integer.MAX_VALUE) {
+			throw new IllegalArgumentException("Required array countedLength exceeds array limit in Java!");
+		}
+		final var result = new float[(int) countedLength];
+		var counter = 0;
+		final var floatBuffer = FloatBuffer.wrap(result);
+		for (final var stream : streams) {
+			final var array = stream.fusedMapTernaryAndThenToArray(ternaryOperator, floatTernaryOperator);
 			floatBuffer.put(counter, array);
 			counter += array.length;
 		}

@@ -1,6 +1,8 @@
 package ch.antonovic.tabularstream.internal.tabular.doubletabular.stream;
 
 import ch.antonovic.tabularstream.DoubleTabularStream;
+import ch.antonovic.tabularstream.function.DoubleTernaryOperator;
+import ch.antonovic.tabularstream.function.TernaryOperator;
 import ch.antonovic.tabularstream.internal.tabular.doubletabular.iterator.RowsIterator;
 import ch.antonovic.tabularstream.iterator.DoubleTabularStreamIterator;
 import jdk.incubator.vector.DoubleVector;
@@ -76,5 +78,11 @@ public class DoubleTabularStreamWithColumns extends DoubleTabularStream {
 	public double[] fusedMapBinaryAndThenToArray(final BinaryOperator<DoubleVector> binaryOperator, final DoubleBinaryOperator doubleBinaryOperator) {
 		checkRequiredArity(this, 2);
 		return SimdHelper.fusedMapBinaryAndThenToArray(this, binaryOperator, doubleBinaryOperator);
+	}
+
+	@Override
+	public double[] fusedMapTernaryAndThenToArray(final TernaryOperator<DoubleVector> ternaryOperator, final DoubleTernaryOperator floatTernaryOperator) {
+		checkRequiredArity(this, 3);
+		return SimdHelper.fusedMapTernaryAndThenToArray(this, ternaryOperator, floatTernaryOperator);
 	}
 }

@@ -2,7 +2,9 @@ package ch.antonovic.tabularstream.internal.tabular.floattabular.stream;
 
 import ch.antonovic.tabularstream.FloatTabularStream;
 import ch.antonovic.tabularstream.function.FloatBinaryOperator;
+import ch.antonovic.tabularstream.function.FloatTernaryOperator;
 import ch.antonovic.tabularstream.function.FloatUnaryOperator;
+import ch.antonovic.tabularstream.function.TernaryOperator;
 import ch.antonovic.tabularstream.internal.tabular.floattabular.iterator.RowsIterator;
 import jdk.incubator.vector.FloatVector;
 import org.apache.logging.log4j.LogManager;
@@ -75,5 +77,11 @@ public class FloatTabularStreamWithColumns extends FloatTabularStream {
 	public float[] fusedMapBinaryAndThenToArray(final BinaryOperator<FloatVector> binaryOperator, final FloatBinaryOperator floatBinaryOperator) {
 		checkRequiredArity(this, 2);
 		return SimdHelper.fusedMapBinaryAndThenToArray(this, binaryOperator, floatBinaryOperator);
+	}
+
+	@Override
+	public float[] fusedMapTernaryAndThenToArray(final TernaryOperator<FloatVector> ternaryOperator, final FloatTernaryOperator floatTernaryOperator) {
+		checkRequiredArity(this, 3);
+		return SimdHelper.fusedMapTernaryAndThenToArray(this, ternaryOperator, floatTernaryOperator);
 	}
 }
