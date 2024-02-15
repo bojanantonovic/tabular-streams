@@ -32,6 +32,8 @@ public abstract class TabularStream<R, I extends TabularStreamIterator<R>> {
 
 	public abstract TabularStream<R, I> limit(int length);
 
+	public abstract TabularStream<R, I> skip(int amount);
+
 	public abstract TabularStream<R, I> filter(Predicate<R> predicate);
 
 	public abstract R[] toArrayColumnStored(IntFunction<R[]> tableGenerator, IntFunction<R> columnGenerator);

@@ -4,6 +4,8 @@ import ch.antonovic.tabularstream.ObjectTabularStream;
 import ch.antonovic.tabularstream.function.TernaryOperator;
 import org.junit.jupiter.api.Test;
 
+import java.util.NoSuchElementException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ObjectTabularStreamTest {
@@ -197,6 +199,21 @@ class ObjectTabularStreamTest {
 	}
 
 	@Test
+	void concat_singleRows() {
+		// arrange
+		final var stream = ObjectTabularStream.concat(Integer.class, ObjectTabularStream.ofRow(a), ObjectTabularStream.ofRow(b));
+		// assert
+		assertEquals(2, stream.count());
+		assertFalse(stream.isInfinite());
+		assertFalse(stream.isFiltered());
+		assertEquals(2, stream.numberOfLayers());
+		assertArrayEquals(new Integer[][] {a, b}, stream.toArray(Integer[][]::new));
+		assertArrayEquals(new Integer[][] {{1, 5}, {2, 6}, {3, 7}, {4, 8}}, stream.toArrayColumnStored(Integer[][]::new, Integer[]::new));
+		final var aggregationResult = stream.aggregateRows(Integer::sum, Integer::max, Integer::min, (x, y) -> x * y);
+		assertTrue(aggregationResult.isPresent());
+	}
+
+	@Test
 	void concat() {
 		// arrange
 		final var stream1 = ObjectTabularStream.of(Integer.class, a, b);
@@ -252,5 +269,22 @@ class ObjectTabularStreamTest {
 		assertEquals(2, stream.numberOfLayers());
 		final var array = stream.toArray(Long[][]::new);
 		assertArrayEquals(new Long[][] {{1L}, {2L}, {3L}, {4L}}, array);
+	}
+
+	@Test
+	void skip_singleRow_oneRowSkipped() {
+		final var stream = ObjectTabularStream.ofRow(ObjectTabularStreamTest.a).skip(1);
+		assertEquals(0, stream.count());
+		assertEquals(2, stream.numberOfLayers());
+		final var aggregationResult = stream.aggregateRows(Integer::sum, Integer::max, Integer::min, (x, y) -> x * y);
+		assertFalse(aggregationResult.isPresent());
+	}
+
+	@Test
+	void skip_singleRow_twoRowsSkipped() {
+		final var stream = ObjectTabularStream.ofRow(ObjectTabularStreamTest.a).skip(2);
+		assertThrows(NoSuchElementException.class, stream::count);
+		assertEquals(2, stream.numberOfLayers());
+		assertThrows(NoSuchElementException.class, () -> stream.aggregateRows(Integer::sum, Integer::max, Integer::min, (x, y) -> x * y));
 	}
 }

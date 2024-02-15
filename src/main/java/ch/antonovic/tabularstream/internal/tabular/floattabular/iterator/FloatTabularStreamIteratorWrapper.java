@@ -55,4 +55,9 @@ public class FloatTabularStreamIteratorWrapper implements FloatTabularStreamIter
 	public void moveCursorToNextPosition(final long stepWidth) {
 		parentIterator.moveCursorToNextPosition(stepWidth);
 	}
+
+	@Override
+	public int skip(final int amount) {
+		return parentIterator.skip(amount);
+	}
 }

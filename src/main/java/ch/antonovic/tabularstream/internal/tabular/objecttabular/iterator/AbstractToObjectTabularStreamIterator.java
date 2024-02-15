@@ -23,6 +23,11 @@ public abstract class AbstractToObjectTabularStreamIterator<U/*, I extends Tabul
 	}
 
 	@Override
+	public int skip(final int amount) {
+		return sourceIterator.skip(amount);
+	}
+
+	@Override
 	public long numberOfDeliveredElements() {
 		return sourceIterator.numberOfDeliveredElements();
 	}

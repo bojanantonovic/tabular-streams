@@ -18,7 +18,7 @@ public abstract class ObjectTabularStreamIteratorByRecursion<T> extends Abstract
 		this.numberOfColumns = initialValues[0].length;
 		this.initialValues = initialValues;
 		this.type = type;
-		inizializeCache();
+		intializeCache();
 	}
 
 	@Override
@@ -37,11 +37,11 @@ public abstract class ObjectTabularStreamIteratorByRecursion<T> extends Abstract
 	@Override
 	public void reset() {
 		cache.clear();
-		inizializeCache();
+		intializeCache();
 		actualPosition = 0;
 	}
 
-	private void inizializeCache() {
+	private void intializeCache() {
 		Collections.addAll(cache, initialValues);
 	}
 
@@ -68,6 +68,14 @@ public abstract class ObjectTabularStreamIteratorByRecursion<T> extends Abstract
 		for (var i = 0; i < stepWidth; i++) {
 			moveCursorToNextPosition();
 		}
+	}
+
+	@Override
+	public int skip(final int amount) {
+		final var oldNumberOfDeliveredElements = numberOfDeliveredElements();
+		moveCursorToNextPosition(amount);
+
+		return (int) (numberOfDeliveredElements() - oldNumberOfDeliveredElements);
 	}
 
 	@Override

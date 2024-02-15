@@ -19,7 +19,7 @@ public abstract class DoubleTabularStreamIteratorByRecursion implements DoubleTa
 	protected DoubleTabularStreamIteratorByRecursion(final double[]... initialValues) {
 		this.numberOfColumns = initialValues[0].length;
 		this.initialValues = initialValues;
-		inizializeCache();
+		intializeCache();
 	}
 
 	@Override
@@ -43,11 +43,11 @@ public abstract class DoubleTabularStreamIteratorByRecursion implements DoubleTa
 	@Override
 	public void reset() {
 		cache.clear();
-		inizializeCache();
+		intializeCache();
 		actualPosition = 0;
 	}
 
-	private void inizializeCache() {
+	private void intializeCache() {
 		Collections.addAll(cache, initialValues);
 	}
 
@@ -74,6 +74,13 @@ public abstract class DoubleTabularStreamIteratorByRecursion implements DoubleTa
 		for (var i = 0; i < stepWidth; i++) {
 			moveCursorToNextPosition();
 		}
+	}
+
+	@Override
+	public int skip(final int amount) {
+		moveCursorToNextPosition(amount);
+
+		return amount;
 	}
 
 	@Override

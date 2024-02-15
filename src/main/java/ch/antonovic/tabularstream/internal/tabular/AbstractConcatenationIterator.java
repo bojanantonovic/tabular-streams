@@ -27,7 +27,15 @@ public abstract class AbstractConcatenationIterator<R, I extends TabularStreamIt
 
 	@Override
 	public R next() {
-		return getCurrentStream().next();
+		if (currentStreamIndex < numberOfIterators && getCurrentStream().hasNext()) {
+			return getCurrentStream().next();
+		} else {
+			currentStreamIndex++;
+			if (currentStreamIndex >= numberOfIterators) {
+				throw new NoSuchElementException();
+			}
+			return getCurrentStream().next();
+		}
 	}
 
 	@Override
@@ -75,5 +83,22 @@ public abstract class AbstractConcatenationIterator<R, I extends TabularStreamIt
 		}
 
 		return false;
+	}
+
+	@Override
+	public int skip(final int amount) {
+		var skippedTotally = 0L;
+		var remainingAmountToSkip = amount;
+		while (remainingAmountToSkip > 0) {
+			final var skipped = getCurrentStream().skip(amount);
+			skippedTotally += skipped;
+			remainingAmountToSkip -= skipped;
+			currentStreamIndex++;
+			if (currentStreamIndex >= numberOfIterators) {
+				throw new NoSuchElementException();
+			}
+		}
+
+		return (int) skippedTotally;
 	}
 }

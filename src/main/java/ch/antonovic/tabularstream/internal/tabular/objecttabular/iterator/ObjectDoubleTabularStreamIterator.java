@@ -23,6 +23,11 @@ public class ObjectDoubleTabularStreamIterator<T> extends AbstractObjectTabularS
 	}
 
 	@Override
+	public int skip(final int amount) {
+		return sourceIterator.skip(amount);
+	}
+
+	@Override
 	public void moveCursorToNextPosition(final long stepWidth) {
 		sourceIterator.moveCursorToNextPosition(stepWidth);
 	}

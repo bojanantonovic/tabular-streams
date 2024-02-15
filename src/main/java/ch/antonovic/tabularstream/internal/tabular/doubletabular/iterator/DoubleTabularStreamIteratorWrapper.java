@@ -55,4 +55,9 @@ public class DoubleTabularStreamIteratorWrapper implements DoubleTabularStreamIt
 	public void moveCursorToNextPosition(long stepWidth) {
 		parentIterator.moveCursorToNextPosition(stepWidth);
 	}
+
+	@Override
+	public int skip(final int amount) {
+		return parentIterator.skip(amount);
+	}
 }

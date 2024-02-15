@@ -46,6 +46,15 @@ public class RowsIterator<T> extends AbstractObjectTabularStreamIterator<T> {
 	}
 
 	@Override
+	public int skip(final int amount) {
+		if (actualPosition + amount >= numberOfRows) {
+			throw new IllegalArgumentException();
+		}
+		actualPosition += amount;
+		return amount;
+	}
+
+	@Override
 	public void reset() {
 		actualPosition = 0;
 	}

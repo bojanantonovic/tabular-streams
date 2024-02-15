@@ -28,6 +28,11 @@ public class ObjectFloatTabularStreamIterator<T> extends AbstractObjectTabularSt
 	}
 
 	@Override
+	public int skip(final int amount) {
+		return sourceIterator.skip(amount);
+	}
+
+	@Override
 	public long numberOfDeliveredElements() {
 		return sourceIterator.numberOfDeliveredElements();
 	}

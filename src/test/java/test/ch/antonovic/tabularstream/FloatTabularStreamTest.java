@@ -2,11 +2,13 @@ package test.ch.antonovic.tabularstream;
 
 import ch.antonovic.tabularstream.FloatTabularStream;
 import ch.antonovic.tabularstream.HtmlExport;
+import ch.antonovic.tabularstream.function.FloatBinaryOperator;
 import ch.antonovic.tabularstream.function.FloatTernaryOperator;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,6 +19,22 @@ class FloatTabularStreamTest {
 
 	final static float[] c = {10, 11, 12};
 	final static float[] d = {13, 14, 15};
+	private static final FloatBinaryOperator[] BI_BINARY_OPERATORS = {Float::max, Float::min};
+
+	private static final FloatBinaryOperator[] QUAD_BINARY_OPERATORS = {Float::sum, Float::max, Float::min, (x, y) -> x * y};
+
+	@Test
+	void singleRow() {
+		final var stream = FloatTabularStream.ofRow(FloatTabularStreamTest.a);
+		assertEquals(a.length, stream.getNumberOfColumns());
+		assertEquals(1, stream.count());
+		assertFalse(stream.isInfinite());
+		assertFalse(stream.isFiltered());
+		assertEquals(1, stream.numberOfLayers());
+		final var aggregationResult = stream.aggregateRows(QUAD_BINARY_OPERATORS);
+		assertTrue(aggregationResult.isPresent());
+		assertArrayEquals(FloatTabularStreamTest.a, aggregationResult.get());
+	}
 
 	@Test
 	void of_noArrays() {
@@ -37,7 +55,7 @@ class FloatTabularStreamTest {
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(1, stream.numberOfLayers());
-		final var aggregationResult = stream.aggregateRows(Float::max, Float::min);
+		final var aggregationResult = stream.aggregateRows(BI_BINARY_OPERATORS);
 		assertTrue(aggregationResult.isPresent());
 		assertArrayEquals(new float[] {4, 5}, aggregationResult.get());
 		final var aggregationResult2 = stream.aggregateRowsWithSameOperator(Float::sum);
@@ -58,6 +76,7 @@ class FloatTabularStreamTest {
 	void generateRecursiveStream_oneStepDoubling_limit() {
 		final var stream = FloatTabularStream.generateRecursiveStream(new float[] {1, 3}, x -> x * 2).limit(5);
 		assertEquals(2, stream.getNumberOfColumns());
+		assertEquals(5, stream.count());
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(2, stream.numberOfLayers());
@@ -70,6 +89,7 @@ class FloatTabularStreamTest {
 	void generateRecursiveStream_twoStepsWithFibonacci_limit() {
 		final var stream = FloatTabularStream.generateRecursiveStream(new float[] {1, 2}, new float[] {1, 2}, Float::sum).limit(5);
 		assertEquals(2, stream.getNumberOfColumns());
+		assertEquals(5, stream.count());
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(2, stream.numberOfLayers());
@@ -81,8 +101,10 @@ class FloatTabularStreamTest {
 	@Test
 	void generateRecursiveStream_threeStepsWithThreebonacci_limit() {
 		final FloatTernaryOperator ternaryOperator = (a, b, c) -> a + b + c;
+		final var limit = 6;
 		final var stream = FloatTabularStream.generateRecursiveStream(new float[] {1, 2}, new float[] {1, 2}, new float[] {1, 2}, ternaryOperator).limit(6);
 		assertEquals(2, stream.getNumberOfColumns());
+		assertEquals(limit, stream.count());
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(2, stream.numberOfLayers());
@@ -100,7 +122,7 @@ class FloatTabularStreamTest {
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(2, stream.numberOfLayers());
-		final var aggregationResult = stream.aggregateRows(Float::max, Float::min);
+		final var aggregationResult = stream.aggregateRows(BI_BINARY_OPERATORS);
 		assertTrue(aggregationResult.isPresent());
 		assertArrayEquals(new float[] {3, 5}, aggregationResult.get());
 	}
@@ -114,7 +136,7 @@ class FloatTabularStreamTest {
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(2, stream.numberOfLayers());
-		final var aggregationResult = stream.aggregateRows(Float::max, Float::min);
+		final var aggregationResult = stream.aggregateRows(BI_BINARY_OPERATORS);
 		assertTrue(aggregationResult.isEmpty());
 	}
 
@@ -127,7 +149,7 @@ class FloatTabularStreamTest {
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(2, stream.numberOfLayers());
-		final var aggregationResult = stream.aggregateRows(Float::sum, Float::max, Float::min, (x, y) -> x * y);
+		final var aggregationResult = stream.aggregateRows(QUAD_BINARY_OPERATORS);
 		assertTrue(aggregationResult.isPresent());
 		assertArrayEquals(new float[] {newLength, 2, 3, (float) Math.pow(4, newLength)}, aggregationResult.get());
 	}
@@ -176,7 +198,7 @@ class FloatTabularStreamTest {
 		assertEquals(2, stream.numberOfLayers());
 		final var array = stream.toArray(float[][]::new);
 		assertArrayEquals(new float[][] {{3, 7}, {4, 8}}, array);
-		final var aggregationResult = stream.aggregateRows(Float::max, Float::min);
+		final var aggregationResult = stream.aggregateRows(BI_BINARY_OPERATORS);
 		assertTrue(aggregationResult.isPresent());
 		assertArrayEquals(new float[] {4, 7}, aggregationResult.get());
 	}
@@ -197,6 +219,21 @@ class FloatTabularStreamTest {
 	}
 
 	@Test
+	void concat_singleRows() {
+		// arrange
+		final var stream = FloatTabularStream.concat(FloatTabularStream.ofRow(a), FloatTabularStream.ofRow(b));
+		// assert
+		assertEquals(2, stream.count());
+		assertFalse(stream.isInfinite());
+		assertFalse(stream.isFiltered());
+		assertEquals(2, stream.numberOfLayers());
+		assertArrayEquals(new float[][] {a, b}, stream.toArray(float[][]::new));
+		assertArrayEquals(new float[][] {{1, 5}, {2, 6}, {3, 7}, {4, 8}}, stream.toArrayColumnStored());
+		final var aggregationResult = stream.aggregateRows(QUAD_BINARY_OPERATORS);
+		assertTrue(aggregationResult.isPresent());
+	}
+
+	@Test
 	void concat() {
 		// arrange
 		final var stream1 = FloatTabularStream.of(a, b);
@@ -207,7 +244,7 @@ class FloatTabularStreamTest {
 		assertFalse(concatenatedStream.isInfinite());
 		assertFalse(concatenatedStream.isFiltered());
 		assertEquals(2, concatenatedStream.numberOfLayers());
-		final var aggregationResult = concatenatedStream.aggregateRows(Float::max, Float::min);
+		final var aggregationResult = concatenatedStream.aggregateRows(BI_BINARY_OPERATORS);
 		assertTrue(aggregationResult.isPresent());
 		assertArrayEquals(new float[] {12, 5}, aggregationResult.get());
 	}
@@ -254,5 +291,22 @@ class FloatTabularStreamTest {
 		assertEquals(2, stream.numberOfLayers());
 		final var array = stream.toArray(Integer[][]::new);
 		assertArrayEquals(new Integer[][] {{1}, {2}, {3}, {4}}, array);
+	}
+
+	@Test
+	void skip_singleRow_oneRowSkipped() {
+		final var stream = FloatTabularStream.ofRow(FloatTabularStreamTest.a).skip(1);
+		assertEquals(0, stream.count());
+		assertEquals(2, stream.numberOfLayers());
+		final var aggregationResult = stream.aggregateRows(QUAD_BINARY_OPERATORS);
+		assertFalse(aggregationResult.isPresent());
+	}
+
+	@Test
+	void skip_singleRow_twoRowsSkipped() {
+		final var stream = FloatTabularStream.ofRow(FloatTabularStreamTest.a).skip(2);
+		assertThrows(NoSuchElementException.class, stream::count);
+		assertEquals(2, stream.numberOfLayers());
+		assertThrows(NoSuchElementException.class, () -> stream.aggregateRows(QUAD_BINARY_OPERATORS));
 	}
 }

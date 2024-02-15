@@ -47,6 +47,13 @@ public class InfinityIterator<T> extends AbstractObjectTabularStreamIterator<T> 
 	}
 
 	@Override
+	public int skip(final int amount) {
+		moveCursorToNextPosition();
+
+		return amount;
+	}
+
+	@Override
 	public T valueFromColumn(final int index) {
 		return cachedCurrentValue[index];
 	}

@@ -7,6 +7,7 @@ import ch.antonovic.tabularstream.iterator.FloatTabularStreamIterator;
 import jdk.incubator.vector.FloatVector;
 import jdk.incubator.vector.VectorSpecies;
 
+import java.util.NoSuchElementException;
 import java.util.function.BinaryOperator;
 import java.util.function.IntFunction;
 import java.util.function.UnaryOperator;
@@ -48,6 +49,16 @@ public class RowsIterator implements FloatTabularStreamIterator {
 	@Override
 	public void moveCursorToNextPosition(final long stepWidth) {
 		actualPosition += (int) stepWidth;
+	}
+
+	@Override
+	public int skip(final int amount) {
+		if (actualPosition + amount >= numberOfRows) {
+			throw new NoSuchElementException();
+		}
+		actualPosition += amount;
+
+		return amount;
 	}
 
 	@Override

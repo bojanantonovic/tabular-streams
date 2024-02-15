@@ -21,6 +21,10 @@ public abstract class FloatTabularStream extends TabularStream<float[], FloatTab
 		super(numberOfColumns);
 	}
 
+	public static FloatTabularStream ofRow(final float[] row) {
+		return new SingleRowStream(row);
+	}
+
 	public static FloatTabularStream of(final float[]... columns) {
 		return switch (columns.length) {
 			case 1 -> new FloatUnaryTabularStreamWithColumn(columns[0]);
@@ -61,6 +65,11 @@ public abstract class FloatTabularStream extends TabularStream<float[], FloatTab
 	@Override
 	public FloatTabularStream limit(final int length) {
 		return new FloatTabularStreamWithLengthLimit(this, length);
+	}
+
+	@Override
+	public FloatTabularStream skip(final int amount) {
+		return new FloatTabularStreamWithSkipping(this, amount);
 	}
 
 	@Override

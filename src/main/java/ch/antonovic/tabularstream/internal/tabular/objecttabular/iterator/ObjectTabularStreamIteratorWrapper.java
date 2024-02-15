@@ -35,6 +35,11 @@ public abstract class ObjectTabularStreamIteratorWrapper<T> extends AbstractObje
 	}
 
 	@Override
+	public int skip(final int amount) {
+		return parentIterator.skip(amount);
+	}
+
+	@Override
 	public T[] next() {
 		return parentIterator.next();
 	}

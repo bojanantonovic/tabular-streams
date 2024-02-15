@@ -58,6 +58,13 @@ public class InfinityIterator implements DoubleTabularStreamIterator {
 	}
 
 	@Override
+	public int skip(final int amount) {
+		moveCursorToNextPosition(amount);
+
+		return amount;
+	}
+
+	@Override
 	public double[] next() {
 		moveCursorToNextPosition();
 		return cachedValue;

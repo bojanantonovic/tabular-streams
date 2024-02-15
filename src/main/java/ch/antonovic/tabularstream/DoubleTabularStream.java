@@ -22,6 +22,10 @@ public abstract class DoubleTabularStream extends TabularStream<double[], Double
 		super(numberOfColumns);
 	}
 
+	public static DoubleTabularStream ofRow(final double[] row) {
+		return new SingleRowStream(row);
+	}
+
 	public static DoubleTabularStream of(final double[]... columns) {
 		return switch (columns.length) {
 			case 1 -> new DoubleUnaryTabularStreamWithColumn(columns[0]);
@@ -58,6 +62,11 @@ public abstract class DoubleTabularStream extends TabularStream<double[], Double
 	@Override
 	public DoubleTabularStream limit(final int length) {
 		return new DoubleTabularStreamWithLengthLimit(this, length);
+	}
+
+	@Override
+	public DoubleTabularStream skip(final int amount) {
+		return new DoubleTabularStreamWithSkipping(this, amount);
 	}
 
 	@Override

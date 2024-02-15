@@ -59,6 +59,13 @@ public class InfinityIterator implements FloatTabularStreamIterator {
 	}
 
 	@Override
+	public int skip(final int amount) {
+		moveCursorToNextPosition(amount);
+
+		return amount;
+	}
+
+	@Override
 	public float[] next() {
 		moveCursorToNextPosition();
 		return currentValue;

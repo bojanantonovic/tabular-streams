@@ -70,6 +70,13 @@ public class ComposablePredicateIterator<R, I extends TabularStreamIterator<R>> 
 	}
 
 	@Override
+	public int skip(final int amount) {
+		moveCursorToNextPosition(amount);
+
+		return amount;
+	}
+
+	@Override
 	public boolean hasNext(final long stepWidth) {
 		return nextValidChunkExists;
 	}

@@ -22,6 +22,10 @@ public abstract class ObjectTabularStream<T> extends TabularStream<T[], ObjectTa
 		this.type = type;
 	}
 
+	public static <T> ObjectTabularStream<T> ofRow(final T[] row) {
+		return new SingleRowStream<>(row);
+	}
+
 	public static <T> ObjectTabularStream<T> of(final Class<T> type, final T[]... columns) {
 		return switch (columns.length) {
 			case 1 -> new ObjectUnaryTabularStreamWithColumn<>(type, columns[0]);
@@ -61,6 +65,11 @@ public abstract class ObjectTabularStream<T> extends TabularStream<T[], ObjectTa
 	@Override
 	public ObjectTabularStream<T> limit(final int length) {
 		return new ObjectTabularStreamWithLengthLimit<>(this, length);
+	}
+
+	@Override
+	public ObjectTabularStream<T> skip(final int amount) {
+		return new ObjectTabularStreamWithSkipping<>(this, amount);
 	}
 
 	@Override
