@@ -7,6 +7,7 @@ import ch.antonovic.tabularstream.internal.tabular.doubletabular.iterator.Single
 import ch.antonovic.tabularstream.iterator.DoubleTabularStreamIterator;
 import jdk.incubator.vector.DoubleVector;
 
+import java.util.OptionalLong;
 import java.util.function.BinaryOperator;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
@@ -61,7 +62,7 @@ public class SingleRowStream extends DoubleTabularStream {
 	}
 
 	@Override
-	public long count() {
-		return 1;
+	public OptionalLong count() {
+		return OptionalLong.of(1);
 	}
 }

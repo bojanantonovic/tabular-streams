@@ -24,7 +24,7 @@ public class HtmlExport {
 
 	public static String toHtml(final FloatTabularStream stream) {
 		final var countedLength = stream.count();
-		if (countedLength > Integer.MAX_VALUE) {
+		if (countedLength.isEmpty() || countedLength.getAsLong() > Integer.MAX_VALUE) {
 			throw new IllegalArgumentException("Required array countedLength exceeds array limit in Java!");
 		}
 		return "<table>" + tableHeader(stream) + tableBody(stream) + "</table>";
@@ -32,7 +32,7 @@ public class HtmlExport {
 
 	public static String toHtml(final DoubleTabularStream stream) {
 		final var countedLength = stream.count();
-		if (countedLength > Integer.MAX_VALUE) {
+		if (countedLength.isEmpty() || countedLength.getAsLong() > Integer.MAX_VALUE) {
 			throw new IllegalArgumentException("Required array countedLength exceeds array limit in Java!");
 		}
 		return "<table>" + tableHeader(stream) + tableBody(stream) + "</table>";
@@ -40,7 +40,7 @@ public class HtmlExport {
 
 	public static String toHtml(final ObjectTabularStream<?> stream) {
 		final var countedLength = stream.count();
-		if (countedLength > Integer.MAX_VALUE) {
+		if (countedLength.isEmpty() || countedLength.getAsLong() > Integer.MAX_VALUE) {
 			throw new IllegalArgumentException("Required array countedLength exceeds array limit in Java!");
 		}
 		return "<table>" + tableHeader(stream) + tableBody(stream) + "</table>";

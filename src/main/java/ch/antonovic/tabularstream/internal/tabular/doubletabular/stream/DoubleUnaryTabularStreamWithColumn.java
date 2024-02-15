@@ -9,6 +9,7 @@ import jdk.incubator.vector.DoubleVector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.OptionalLong;
 import java.util.function.BinaryOperator;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
@@ -25,8 +26,8 @@ public class DoubleUnaryTabularStreamWithColumn extends DoubleUnaryTabularStream
 	}
 
 	@Override
-	public long count() {
-		return column.length;
+	public OptionalLong count() {
+		return OptionalLong.of(column.length);
 	}
 
 	@Override

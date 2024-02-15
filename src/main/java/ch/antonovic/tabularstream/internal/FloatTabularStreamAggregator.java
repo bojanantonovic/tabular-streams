@@ -32,7 +32,7 @@ public class FloatTabularStreamAggregator {
 	private static Optional<float[]> aggregateRows(final FloatTabularStream stream, final IntFunction<FloatBinaryOperator> floatBinaryOperatorIntFunction) {
 		final var numberOfColumns = stream.getNumberOfColumns();
 		final var length = stream.count();
-		if (length == 0) {
+		if (length.isEmpty() || length.getAsLong() == 0L) {
 			return Optional.empty();
 		}
 		final var iterator = stream.iterator();

@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
+import java.util.OptionalLong;
 
 public class ObjectTabularStreamWithColumns<T> extends ObjectTabularStream<T> {
 
@@ -33,8 +34,8 @@ public class ObjectTabularStreamWithColumns<T> extends ObjectTabularStream<T> {
 	}
 
 	@Override
-	public long count() {
-		return numberOfRows;
+	public OptionalLong count() {
+		return OptionalLong.of(numberOfRows);
 	}
 
 	@Override

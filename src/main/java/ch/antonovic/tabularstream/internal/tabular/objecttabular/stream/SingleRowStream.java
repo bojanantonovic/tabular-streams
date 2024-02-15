@@ -4,6 +4,8 @@ import ch.antonovic.tabularstream.ObjectTabularStream;
 import ch.antonovic.tabularstream.internal.tabular.objecttabular.iterator.SingleRowIterator;
 import ch.antonovic.tabularstream.iterator.ObjectTabularStreamIterator;
 
+import java.util.OptionalLong;
+
 public class SingleRowStream<T> extends ObjectTabularStream<T> {
 	private final T[] row;
 
@@ -38,7 +40,7 @@ public class SingleRowStream<T> extends ObjectTabularStream<T> {
 	}
 
 	@Override
-	public long count() {
-		return 1;
+	public OptionalLong count() {
+		return OptionalLong.of(1);
 	}
 }

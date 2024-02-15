@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
+import java.util.OptionalLong;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
@@ -38,8 +39,8 @@ public class FloatTabularStreamWithColumns extends FloatTabularStream {
 	}
 
 	@Override
-	public long count() {
-		return numberOfRows;
+	public OptionalLong count() {
+		return OptionalLong.of(numberOfRows);
 	}
 
 	@Override

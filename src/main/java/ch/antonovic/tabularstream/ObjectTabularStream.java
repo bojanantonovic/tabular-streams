@@ -110,7 +110,11 @@ public abstract class ObjectTabularStream<T> extends TabularStream<T[], ObjectTa
 
 	@Override
 	public T[][] toArrayColumnStored(final IntFunction<T[][]> tableGenerator, final IntFunction<T[]> columnGenerator) {
-		final var countedLength = count();
+		final var countOptional = count();
+		if (countOptional.isEmpty()) {
+			throw new IllegalStateException("Cannot convert infinite stream to array");
+		}
+		final var countedLength = countOptional.orElse(0L);
 		LOGGER.debug("counted length: {}", countedLength);
 		LOGGER.debug("number of columns: {}", numberOfColumns);
 		if (countedLength > Integer.MAX_VALUE) {

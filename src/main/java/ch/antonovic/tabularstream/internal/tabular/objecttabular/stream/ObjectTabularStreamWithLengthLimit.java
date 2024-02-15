@@ -6,6 +6,8 @@ import ch.antonovic.tabularstream.iterator.ObjectTabularStreamIterator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.OptionalLong;
+
 public class ObjectTabularStreamWithLengthLimit<T> extends ObjectTabularStreamWrapper<T> {
 
 	private static final Logger LOGGER = LogManager.getLogger(ObjectTabularStreamWithLengthLimit.class);
@@ -28,9 +30,9 @@ public class ObjectTabularStreamWithLengthLimit<T> extends ObjectTabularStreamWr
 	}
 
 	@Override
-	public long count() {
+	public OptionalLong count() {
 		if (parent.isInfinite()) {
-			return limit;
+			return OptionalLong.of(limit);
 		}
 		return super.count();
 	}

@@ -10,6 +10,7 @@ import jdk.incubator.vector.FloatVector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.OptionalLong;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
@@ -24,8 +25,8 @@ public class FloatUnaryTabularStreamWithColumn extends FloatUnaryTabularStream {
 	}
 
 	@Override
-	public long count() {
-		return column.length;
+	public OptionalLong count() {
+		return OptionalLong.of(column.length);
 	}
 
 	@Override

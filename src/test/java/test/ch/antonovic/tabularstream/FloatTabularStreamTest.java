@@ -27,7 +27,7 @@ class FloatTabularStreamTest {
 	void singleRow() {
 		final var stream = FloatTabularStream.ofRow(FloatTabularStreamTest.a);
 		assertEquals(a.length, stream.getNumberOfColumns());
-		assertEquals(1, stream.count());
+		assertEquals(1, stream.count().orElse(0L));
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(1, stream.numberOfLayers());
@@ -40,7 +40,7 @@ class FloatTabularStreamTest {
 	void of_noArrays() {
 		final var stream = FloatTabularStream.of();
 		assertEquals(0, stream.getNumberOfColumns());
-		assertEquals(0, stream.count());
+		assertEquals(0, stream.count().orElse(0L));
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(1, stream.numberOfLayers());
@@ -51,7 +51,7 @@ class FloatTabularStreamTest {
 	void of() {
 		final var stream = FloatTabularStream.of(a, b);
 		assertEquals(2, stream.getNumberOfColumns());
-		assertEquals(a.length, stream.count());
+		assertEquals(a.length, stream.count().orElse(0L));
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(1, stream.numberOfLayers());
@@ -70,13 +70,14 @@ class FloatTabularStreamTest {
 		assertTrue(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(1, stream.numberOfLayers());
+		assertTrue(stream.count().isEmpty());
 	}
 
 	@Test
 	void generateRecursiveStream_oneStepDoubling_limit() {
 		final var stream = FloatTabularStream.generateRecursiveStream(new float[] {1, 3}, x -> x * 2).limit(5);
 		assertEquals(2, stream.getNumberOfColumns());
-		assertEquals(5, stream.count());
+		assertEquals(5, stream.count().orElse(0L));
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(2, stream.numberOfLayers());
@@ -89,7 +90,7 @@ class FloatTabularStreamTest {
 	void generateRecursiveStream_twoStepsWithFibonacci_limit() {
 		final var stream = FloatTabularStream.generateRecursiveStream(new float[] {1, 2}, new float[] {1, 2}, Float::sum).limit(5);
 		assertEquals(2, stream.getNumberOfColumns());
-		assertEquals(5, stream.count());
+		assertEquals(5, stream.count().orElse(0L));
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(2, stream.numberOfLayers());
@@ -104,7 +105,7 @@ class FloatTabularStreamTest {
 		final var limit = 6;
 		final var stream = FloatTabularStream.generateRecursiveStream(new float[] {1, 2}, new float[] {1, 2}, new float[] {1, 2}, ternaryOperator).limit(6);
 		assertEquals(2, stream.getNumberOfColumns());
-		assertEquals(limit, stream.count());
+		assertEquals(limit, stream.count().orElse(0L));
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(2, stream.numberOfLayers());
@@ -118,7 +119,7 @@ class FloatTabularStreamTest {
 		final var newLength = 3;
 		final var stream = FloatTabularStream.of(a, b).limit(newLength);
 		assertEquals(2, stream.getNumberOfColumns());
-		assertEquals(newLength, stream.count());
+		assertEquals(newLength, stream.count().orElse(0L));
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(2, stream.numberOfLayers());
@@ -132,7 +133,7 @@ class FloatTabularStreamTest {
 		final var newLength = 0;
 		final var stream = FloatTabularStream.of(a, b).limit(newLength);
 		assertEquals(2, stream.getNumberOfColumns());
-		assertEquals(newLength, stream.count());
+		assertEquals(newLength, stream.count().orElse(0L));
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(2, stream.numberOfLayers());
@@ -145,7 +146,7 @@ class FloatTabularStreamTest {
 		final var newLength = 3;
 		final var stream = FloatTabularStream.generator(4, () -> a).limit(newLength);
 		assertEquals(4, stream.getNumberOfColumns());
-		assertEquals(newLength, stream.count());
+		assertEquals(newLength, stream.count().orElse(0L));
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(2, stream.numberOfLayers());
@@ -192,7 +193,7 @@ class FloatTabularStreamTest {
 		final var stream = original.filter(row -> row[0] + row[1] >= 10);
 		// assert
 		assertEquals(2, stream.getNumberOfColumns());
-		assertEquals(2, stream.count());
+		assertEquals(2, stream.count().orElse(0L));
 		assertFalse(stream.isInfinite());
 		assertTrue(stream.isFiltered());
 		assertEquals(2, stream.numberOfLayers());
@@ -210,7 +211,7 @@ class FloatTabularStreamTest {
 		final var stream2 = FloatTabularStream.of();
 		final var concatenatedStream = FloatTabularStream.concat(stream1, stream2);
 		// act & assert
-		assertEquals(0, concatenatedStream.count());
+		assertEquals(0, concatenatedStream.count().orElse(0L));
 		assertFalse(concatenatedStream.isInfinite());
 		assertFalse(concatenatedStream.isFiltered());
 		assertEquals(2, concatenatedStream.numberOfLayers());
@@ -223,7 +224,7 @@ class FloatTabularStreamTest {
 		// arrange
 		final var stream = FloatTabularStream.concat(FloatTabularStream.ofRow(a), FloatTabularStream.ofRow(b));
 		// assert
-		assertEquals(2, stream.count());
+		assertEquals(2, stream.count().orElse(0L));
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(2, stream.numberOfLayers());
@@ -240,7 +241,7 @@ class FloatTabularStreamTest {
 		final var stream2 = FloatTabularStream.of(c, d);
 		final var concatenatedStream = FloatTabularStream.concat(stream1, stream2);
 		// act & assert
-		assertEquals(7, concatenatedStream.count());
+		assertEquals(7, concatenatedStream.count().orElse(0L));
 		assertFalse(concatenatedStream.isInfinite());
 		assertFalse(concatenatedStream.isFiltered());
 		assertEquals(2, concatenatedStream.numberOfLayers());
@@ -254,7 +255,7 @@ class FloatTabularStreamTest {
 		// act
 		final var stream = FloatTabularStream.of(a, b).mapAllValuesUnary(x -> x * 2);
 		// assert
-		assertEquals(4, stream.count());
+		assertEquals(4, stream.count().orElse(0L));
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(2, stream.numberOfLayers());
@@ -267,7 +268,7 @@ class FloatTabularStreamTest {
 		// act
 		final var stream = FloatTabularStream.of(a, b).mapColumnsUnary(x -> x * 2, y -> y + 1);
 		// assert
-		assertEquals(4, stream.count());
+		assertEquals(4, stream.count().orElse(0L));
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(2, stream.numberOfLayers());
@@ -285,7 +286,7 @@ class FloatTabularStreamTest {
 		HtmlExport.toHtmlFile(Path.of("target", "mapToObject_mappedStream.html"), stream);
 		// assert
 		assertEquals(1, stream.getNumberOfColumns());
-		assertEquals(4, stream.count());
+		assertEquals(4, stream.count().orElse(0L));
 		assertFalse(stream.isInfinite());
 		assertFalse(stream.isFiltered());
 		assertEquals(2, stream.numberOfLayers());
@@ -296,7 +297,7 @@ class FloatTabularStreamTest {
 	@Test
 	void skip_singleRow_oneRowSkipped() {
 		final var stream = FloatTabularStream.ofRow(FloatTabularStreamTest.a).skip(1);
-		assertEquals(0, stream.count());
+		assertEquals(0, stream.count().orElse(0L));
 		assertEquals(2, stream.numberOfLayers());
 		final var aggregationResult = stream.aggregateRows(QUAD_BINARY_OPERATORS);
 		assertFalse(aggregationResult.isPresent());

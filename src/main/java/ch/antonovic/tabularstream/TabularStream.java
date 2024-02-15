@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
+import java.util.OptionalLong;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
 
@@ -38,9 +39,9 @@ public abstract class TabularStream<R, I extends TabularStreamIterator<R>> {
 
 	public abstract R[] toArrayColumnStored(IntFunction<R[]> tableGenerator, IntFunction<R> columnGenerator);
 
-	public long count() {
+	public OptionalLong count() {
 		if (isInfinite()) {
-			throw new IllegalArgumentException("This stream is infinite.");
+			return OptionalLong.empty();
 		}
 		final var iterator = iterator();
 		LOGGER.debug("iterator: {}", () -> iterator.getClass().getSimpleName());
@@ -51,16 +52,20 @@ public abstract class TabularStream<R, I extends TabularStreamIterator<R>> {
 		final var result = iterator.numberOfDeliveredElements();
 		LOGGER.debug("number of delivered elements so far: {}", result);
 		iterator.reset();
-		return result;
+		return OptionalLong.of(result);
 	}
 
 	public R[] toArray(final IntFunction<R[]> generator) {
-		final var countedLength = count();
-		LOGGER.debug("counted length: {}", countedLength);
-		if (countedLength > Integer.MAX_VALUE) {
-			throw new IllegalArgumentException("Required array countedLength exceeds array limit in Java!");
+		final var countOptional = count();
+		if (countOptional.isEmpty()) {
+			throw new UnsupportedOperationException("Cannot convert infinite stream to array!");
 		}
-		final var validLength = (int) countedLength;
+		final var length = countOptional.orElse(0L);
+		LOGGER.debug("counted length: {}", length);
+		if (length > Integer.MAX_VALUE) {
+			throw new IllegalArgumentException("Required array count exceeds array limit in Java!");
+		}
+		final var validLength = (int) length;
 		final var result = generator.apply(validLength);
 		final var iterator = iterator();
 		for (var counter = 0; iterator.hasNext(); counter++) {

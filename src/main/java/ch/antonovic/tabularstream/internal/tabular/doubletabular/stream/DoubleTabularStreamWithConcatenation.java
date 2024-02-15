@@ -1,9 +1,9 @@
 package ch.antonovic.tabularstream.internal.tabular.doubletabular.stream;
 
 import ch.antonovic.tabularstream.DoubleTabularStream;
-import ch.antonovic.tabularstream.TabularStream;
 import ch.antonovic.tabularstream.function.DoubleTernaryOperator;
 import ch.antonovic.tabularstream.function.TernaryOperator;
+import ch.antonovic.tabularstream.internal.tabular.CountingHelper;
 import ch.antonovic.tabularstream.internal.tabular.doubletabular.iterator.ConcatenationIterator;
 import ch.antonovic.tabularstream.iterator.DoubleTabularStreamIterator;
 import jdk.incubator.vector.DoubleVector;
@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import java.nio.DoubleBuffer;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.OptionalLong;
 import java.util.function.BinaryOperator;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
@@ -20,7 +21,7 @@ import java.util.function.UnaryOperator;
 
 public class DoubleTabularStreamWithConcatenation extends DoubleTabularStream {
 
-	private static final Logger LOGGER = LogManager.getLogger(DoubleUnaryTabularStreamWithColumn.class);
+	private static final Logger LOGGER = LogManager.getLogger(DoubleTabularStreamWithConcatenation.class);
 
 	private final DoubleTabularStream[] streams;
 
@@ -51,8 +52,8 @@ public class DoubleTabularStreamWithConcatenation extends DoubleTabularStream {
 	}
 
 	@Override
-	public long count() {
-		return Arrays.stream(streams).mapToLong(TabularStream::count).sum();
+	public OptionalLong count() {
+		return CountingHelper.countForConcatenation(streams);
 	}
 
 	@Override
@@ -90,13 +91,8 @@ public class DoubleTabularStreamWithConcatenation extends DoubleTabularStream {
 
 	@Override
 	public double[] fusedMapUnaryAndThenToArray(final UnaryOperator<DoubleVector> unaryOperator, final DoubleUnaryOperator doubleUnaryOperator) {
-		final var countedLength = count();
-		LOGGER.debug("counted length: {}", countedLength);
+		final var result = new double[(int) CountingHelper.computeLengthAndVerifyIt(this)];
 		LOGGER.debug("number of columns: {}", numberOfColumns);
-		if (countedLength > Integer.MAX_VALUE) {
-			throw new IllegalArgumentException("Required array countedLength exceeds array limit in Java!");
-		}
-		final var result = new double[(int) countedLength];
 		var counter = 0;
 		final var doubleBuffer = DoubleBuffer.wrap(result);
 		for (final var stream : streams) {
@@ -109,13 +105,7 @@ public class DoubleTabularStreamWithConcatenation extends DoubleTabularStream {
 
 	@Override
 	public double[] fusedMapBinaryAndThenToArray(final BinaryOperator<DoubleVector> binaryOperator, final DoubleBinaryOperator doubleBinaryOperator) {
-		final var countedLength = count();
-		LOGGER.debug("counted length: {}", countedLength);
-		LOGGER.debug("number of columns: {}", numberOfColumns);
-		if (countedLength > Integer.MAX_VALUE) {
-			throw new IllegalArgumentException("Required array countedLength exceeds array limit in Java!");
-		}
-		final var result = new double[(int) countedLength];
+		final var result = new double[(int) CountingHelper.computeLengthAndVerifyIt(this)];
 		var counter = 0;
 		final var doubleBuffer = DoubleBuffer.wrap(result);
 		for (final var stream : streams) {
@@ -128,13 +118,7 @@ public class DoubleTabularStreamWithConcatenation extends DoubleTabularStream {
 
 	@Override
 	public double[] fusedMapTernaryAndThenToArray(final TernaryOperator<DoubleVector> ternaryOperator, final DoubleTernaryOperator doubleTernaryOperator) {
-		final var countedLength = count();
-		LOGGER.debug("counted length: {}", countedLength);
-		LOGGER.debug("number of columns: {}", numberOfColumns);
-		if (countedLength > Integer.MAX_VALUE) {
-			throw new IllegalArgumentException("Required array countedLength exceeds array limit in Java!");
-		}
-		final var result = new double[(int) countedLength];
+		final var result = new double[(int) CountingHelper.computeLengthAndVerifyIt(this)];
 		var counter = 0;
 		final var doubleBuffer = DoubleBuffer.wrap(result);
 		for (final var stream : streams) {

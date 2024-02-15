@@ -9,6 +9,7 @@ import ch.antonovic.tabularstream.internal.tabular.floattabular.iterator.SingleR
 import ch.antonovic.tabularstream.iterator.FloatTabularStreamIterator;
 import jdk.incubator.vector.FloatVector;
 
+import java.util.OptionalLong;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
@@ -61,7 +62,7 @@ public class SingleRowStream extends FloatTabularStream {
 	}
 
 	@Override
-	public long count() {
-		return 1;
+	public OptionalLong count() {
+		return OptionalLong.of(1);
 	}
 }

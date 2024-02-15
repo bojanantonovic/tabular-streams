@@ -3,6 +3,7 @@ package ch.antonovic.tabularstream.internal.tabular.doubletabular.stream;
 import ch.antonovic.tabularstream.DoubleTabularStream;
 import ch.antonovic.tabularstream.function.DoubleTernaryOperator;
 import ch.antonovic.tabularstream.function.TernaryOperator;
+import ch.antonovic.tabularstream.internal.tabular.CountingHelper;
 import ch.antonovic.tabularstream.internal.tabular.doubletabular.iterator.RowsIterator;
 import jdk.incubator.vector.DoubleVector;
 import org.apache.logging.log4j.LogManager;
@@ -22,14 +23,7 @@ public class SimdHelper {
 	}
 
 	public static double[] fusedMapUnaryAndThenToArray(final DoubleTabularStream stream, final UnaryOperator<DoubleVector> unaryOperator, final DoubleUnaryOperator doubleUnaryOperator) {
-		final var countedLength = stream.count();
-		LOGGER.debug("counted length: {}", countedLength);
-		LOGGER.debug("number of columns: {}", stream.getNumberOfColumns());
-		if (countedLength > Integer.MAX_VALUE) {
-			throw new IllegalArgumentException("Required array countedLength exceeds array limit in Java!");
-		}
-		final var result = new double[(int) countedLength];
-
+		final var result = new double[(int) CountingHelper.computeLengthAndVerifyIt(stream)];
 		final var iterator1 = (RowsIterator) stream.iterator();
 		final var species = DoubleVector.SPECIES_PREFERRED;
 		final var stepWidth = species.length();
@@ -47,14 +41,7 @@ public class SimdHelper {
 	}
 
 	public static double[] fusedMapBinaryAndThenToArray(final DoubleTabularStream stream, final BinaryOperator<DoubleVector> unaryOperator, final DoubleBinaryOperator doubleBinaryOperator) {
-		final var countedLength = stream.count();
-		LOGGER.debug("counted length: {}", countedLength);
-		LOGGER.debug("number of columns: {}", stream.getNumberOfColumns());
-		if (countedLength > Integer.MAX_VALUE) {
-			throw new IllegalArgumentException("Required array countedLength exceeds array limit in Java!");
-		}
-		final var result = new double[(int) countedLength];
-
+		final var result = new double[(int) CountingHelper.computeLengthAndVerifyIt(stream)];
 		final var iterator1 = (RowsIterator) stream.iterator();
 		final var species = DoubleVector.SPECIES_PREFERRED;
 		final var stepWidth = species.length();
@@ -72,14 +59,7 @@ public class SimdHelper {
 	}
 
 	public static double[] fusedMapTernaryAndThenToArray(final DoubleTabularStream stream, final TernaryOperator<DoubleVector> ternaryOperator, final DoubleTernaryOperator doubleTernaryOperator) {
-		final var countedLength = stream.count();
-		LOGGER.debug("counted length: {}", countedLength);
-		LOGGER.debug("number of columns: {}", stream.getNumberOfColumns());
-		if (countedLength > Integer.MAX_VALUE) {
-			throw new IllegalArgumentException("Required array countedLength exceeds array limit in Java!");
-		}
-		final var result = new double[(int) countedLength];
-
+		final var result = new double[(int) CountingHelper.computeLengthAndVerifyIt(stream)];
 		final var iterator1 = (RowsIterator) stream.iterator();
 		final var species = DoubleVector.SPECIES_PREFERRED;
 		final var stepWidth = species.length();

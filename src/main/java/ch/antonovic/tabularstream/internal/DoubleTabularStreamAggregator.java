@@ -32,7 +32,7 @@ public class DoubleTabularStreamAggregator {
 	private static Optional<double[]> aggregateRows(final DoubleTabularStream stream, final IntFunction<DoubleBinaryOperator> doubleBinaryOperatorIntFunction) {
 		final var numberOfColumns = stream.getNumberOfColumns();
 		final var length = stream.count();
-		if (length == 0) {
+		if (length.isEmpty() || length.getAsLong() == 0L) {
 			return Optional.empty();
 		}
 		final var iterator = stream.iterator();

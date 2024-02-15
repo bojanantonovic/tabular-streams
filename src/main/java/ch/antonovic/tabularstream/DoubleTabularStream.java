@@ -122,7 +122,11 @@ public abstract class DoubleTabularStream extends TabularStream<double[], Double
 
 	@Override
 	public double[][] toArrayColumnStored(final IntFunction<double[][]> tableGenerator, final IntFunction<double[]> columnGenerator) {
-		final var countedLength = count();
+		final var countOptional = count();
+		if (countOptional.isEmpty()) {
+			throw new IllegalStateException("Cannot convert infinite stream to array");
+		}
+		final var countedLength = countOptional.orElse(0L);
 		LOGGER.debug("counted length: {}", countedLength);
 		LOGGER.debug("number of columns: {}", numberOfColumns);
 		if (countedLength > Integer.MAX_VALUE) {

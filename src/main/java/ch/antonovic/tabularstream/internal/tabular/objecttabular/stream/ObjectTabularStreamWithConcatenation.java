@@ -1,12 +1,13 @@
 package ch.antonovic.tabularstream.internal.tabular.objecttabular.stream;
 
 import ch.antonovic.tabularstream.ObjectTabularStream;
-import ch.antonovic.tabularstream.TabularStream;
+import ch.antonovic.tabularstream.internal.tabular.CountingHelper;
 import ch.antonovic.tabularstream.internal.tabular.objecttabular.iterator.ConcatenationIterator;
 import ch.antonovic.tabularstream.iterator.ObjectTabularStreamIterator;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.OptionalLong;
 import java.util.function.BinaryOperator;
 
 public class ObjectTabularStreamWithConcatenation<T> extends ObjectTabularStream<T> {
@@ -40,8 +41,8 @@ public class ObjectTabularStreamWithConcatenation<T> extends ObjectTabularStream
 	}
 
 	@Override
-	public long count() {
-		return Arrays.stream(streams).mapToLong(TabularStream::count).sum();
+	public OptionalLong count() {
+		return CountingHelper.countForConcatenation(streams);
 	}
 
 	@Override
